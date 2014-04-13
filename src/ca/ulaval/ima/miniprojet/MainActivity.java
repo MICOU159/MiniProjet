@@ -60,5 +60,21 @@ public class MainActivity extends Activity {
 			return rootView;
 		}
 	}
+	
+	public void openLoginForm(View view){
+		//...
+	}
+	
+	public void openRequestForm(View view){
+		//...
+	}
+	
+	public void openMap(View view){
+		//...
+	}
+	
+	public void openList(View view){
+		//...
+	}
 
 }

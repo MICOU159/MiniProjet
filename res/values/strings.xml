@@ -4,5 +4,9 @@
     <string name="app_name">MiniProjet</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="login">Login</string>
+    <string name="make_request">Make Request</string>
+    <string name="view_map">View Map</string>
+    <string name="view_list">View List</string>
 
 </resources>

@@ -89,7 +89,8 @@ public class MainActivity extends Activity {
 	}
 	
 	public void openMap(View view){
-		//...
+		Intent intent = new Intent(this, ViewMapActivity.class);
+		startActivity(intent);
 	}
 	
 	public void openList(View view){

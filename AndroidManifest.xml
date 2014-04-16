@@ -14,13 +14,22 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="ca.ulaval.ima.miniprojet.MainActivity"
+            android:name="ca.ulaval.ima.miniprojet.activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="ca.ulaval.ima.miniprojet.activity.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:parentActivityName="ca.ulaval.ima.miniprojet.activity.MainActivity"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.ulaval.ima.miniprojet.MainActivity" />
         </activity>
     </application>
 

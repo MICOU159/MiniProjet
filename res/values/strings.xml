@@ -8,5 +8,7 @@
     <string name="make_request">Make Request</string>
     <string name="view_map">View Map</string>
     <string name="view_list">View List</string>
+    <string name="API_BASE">http://relaybit.com:2222/</string>
+    <string name="API_FORMAT"></string>
 
 </resources>

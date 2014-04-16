@@ -1,8 +1,13 @@
-package ca.ulaval.ima.miniprojet;
+package ca.ulaval.ima.miniprojet.activity;
 
+import ca.ulaval.ima.miniprojet.R;
+import ca.ulaval.ima.miniprojet.R.id;
+import ca.ulaval.ima.miniprojet.R.layout;
+import ca.ulaval.ima.miniprojet.R.menu;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,6 +17,9 @@ import android.view.ViewGroup;
 import android.os.Build;
 
 public class MainActivity extends Activity {
+	
+	static final int REQUEST_LOGIN = 1;
+	private boolean loggedIn = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +69,18 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	public void openLoginForm(View view){
-		//...
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
+		//startActivityForResult(intent, REQUEST_LOGIN);
 	}
 	
 	public void openRequestForm(View view){

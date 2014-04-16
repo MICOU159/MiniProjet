@@ -10,5 +10,11 @@
     <string name="view_list">View List</string>
     <string name="API_BASE">http://relaybit.com:2222/</string>
     <string name="API_FORMAT"></string>
+    <string name="title_activity_make_request">MakeRequestActivity</string>
+    <string name="destination">Destination : </string>
+    <string name="personsCount">Number of travelers : </string>
+    <string name="message">Leave a message : </string>
+    <string name="summit">Summit</string>
+    
 
 </resources>

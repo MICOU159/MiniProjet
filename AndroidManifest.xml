@@ -31,6 +31,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.ulaval.ima.miniprojet.MainActivity" />
         </activity>
+        <activity
+            android:name="ca.ulaval.ima.miniprojet.activity.MakeRequestActivity"
+            android:label="@string/title_activity_make_request"
+            android:parentActivityName="ca.ulaval.ima.miniprojet.activity.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.ulaval.ima.miniprojet.activity.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

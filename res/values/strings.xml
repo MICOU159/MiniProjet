@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MiniProjet</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="login">Login</string>
+    <string name="make_request">Make Request</string>
+    <string name="view_map">View Map</string>
+    <string name="view_list">View List</string>
+    <string name="API_BASE">http://relaybit.com:2222/</string>
+    <string name="API_FORMAT"></string>
+    <string name="title_activity_make_request">MakeRequestActivity</string>
+    <string name="destination">Destination : </string>
+    <string name="personsCount">Number of travelers : </string>
+    <string name="message">Leave a message : </string>
+    <string name="summit">Summit</string>
+    
+
+</resources>

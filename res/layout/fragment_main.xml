@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="ca.ulaval.ima.miniprojet.MainActivity$PlaceholderFragment" >
+
+
+    <Button 
+        android:id="@+id/login_btn"
+        android:text="@string/login" 
+    	android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="openLoginForm" />
+    
+    <Button 
+        android:id="@+id/makeRequest_btn"
+        android:text="@string/make_request" 
+    	android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/login_btn"
+        android:onClick="openRequestForm" />
+        
+    <Button 
+        android:id="@+id/viewMap_btn"
+        android:text="@string/view_map" 
+    	android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/makeRequest_btn"
+        android:onClick="openMap" />
+    
+    <Button 
+        android:id="@+id/viewList_btn"
+        android:text="@string/view_list" 
+    	android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/viewMap_btn"
+        android:onClick="openList" />
+
+</RelativeLayout>

@@ -1,9 +1,13 @@
-package ca.ulaval.ima.miniprojet;
+package ca.ulaval.ima.miniprojet.activity;
 
+import ca.ulaval.ima.miniprojet.R;
+import ca.ulaval.ima.miniprojet.R.id;
+import ca.ulaval.ima.miniprojet.R.layout;
+import ca.ulaval.ima.miniprojet.R.menu;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
-//import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,13 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
+public class MakeRequestActivity extends Activity {
 
 public class MainActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_make_request);
 
 		if (savedInstanceState == null) {
 
@@ -30,7 +35,7 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.make_request, menu);
 		return true;
 	}
 
@@ -57,10 +62,14 @@ public class MainActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
+			View rootView = inflater.inflate(R.layout.fragment_make_request,
+					container, false);
 			return rootView;
 		}
+	}
+	
+	public void summit(View view){
+		this.finish();
 	}
 
 }

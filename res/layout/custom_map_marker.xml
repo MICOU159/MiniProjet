@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/lbUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Username: " />
+
+        <TextView
+            android:id="@+id/txtPassengers"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignBaseline="@+id/lbPassengers"
+            android:layout_alignBottom="@+id/lbPassengers"
+            android:layout_alignLeft="@+id/txtUsername"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/txtDestination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lbPassengers"
+            android:layout_alignLeft="@+id/txtUsername"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/txtMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/lbMessage"
+            android:layout_alignBottom="@+id/lbMessage"
+            android:layout_alignLeft="@+id/txtPassengers"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/lbDestination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lbUsername"
+            android:text="Destination: " />
+
+        <TextView
+            android:id="@+id/lbPassengers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lbDestination"
+            android:text="Passengers: " />
+
+        <TextView
+            android:id="@+id/txtUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/lbPassengers" />
+
+        <TextView
+            android:id="@+id/lbClickHere"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtMessage"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/lbPassengers"
+            android:text="Click here to offer a ride!" />
+
+        <TextView
+            android:id="@+id/lbMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lbPassengers"
+            android:text="Message: " />
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -9,6 +9,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 
 import ca.ulaval.ima.miniprojet.R;
 import ca.ulaval.ima.miniprojet.activity.MainActivity.PlaceholderFragment;
@@ -18,6 +19,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ViewMapActivity extends FragmentActivity{
@@ -52,8 +55,6 @@ public class ViewMapActivity extends FragmentActivity{
 	     //          .getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 		
-		Marker mMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())));
-		mMarker.setTitle("Quebec");
 	    CameraUpdate center=
 	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
 	            		lastKnownLocation.getLongitude()));
@@ -61,6 +62,50 @@ public class ViewMapActivity extends FragmentActivity{
 
 	        mMap.moveCamera(center);
 	        mMap.animateCamera(zoom);
+	        
+	        
+	        
+	        // Setting a custom info window adapter for the google map
+	        mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+
+	            // Use default InfoWindow frame
+	            @Override
+	            public View getInfoWindow(Marker arg0) {
+	                return null;
+	            }
+
+	            // Defines the contents of the InfoWindow
+	            @Override
+	            public View getInfoContents(Marker arg0) {
+
+	                // Getting view from the layout file info_window_layout
+	                View v = getLayoutInflater().inflate(R.layout.custom_map_marker, null);
+
+	                // Getting the position from the marker
+	                LatLng latLng = arg0.getPosition();
+
+	                // Getting reference to the TextViews
+	                TextView lbUsername = (TextView) v.findViewById(R.id.txtUsername);
+	                TextView lbDestination = (TextView) v.findViewById(R.id.txtDestination);
+	                TextView lbPassengers = (TextView) v.findViewById(R.id.txtPassengers);
+	                TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
+	                
+	                // Setting the values
+	                lbUsername.setText("Joe");
+	                lbDestination.setText("Montréal");
+	                lbPassengers.setText("3");
+	                lbMessage.setText("30$ tip for a ride!"); //problème d'affichage si message trop long
+
+	                // Returning the view containing InfoWindow contents
+	                return v;
+
+	            }
+	        });
+	        
+	        
+			Marker mMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())));
+			mMarker.setTitle("Request");
+	        
 	}
 	
 	private void SetUpMapifNeeded() {

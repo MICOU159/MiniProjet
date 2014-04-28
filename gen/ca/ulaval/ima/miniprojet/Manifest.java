@@ -9,6 +9,6 @@ package ca.ulaval.ima.miniprojet;
 
 public final class Manifest {
     public static final class permission {
-        public static final String MAPS_RECEIVE="your_package_name.permission.MAPS_RECEIVE";
+        public static final String MAPS_RECEIVE="ca.ulaval.ima.miniprojet.activity.MAPS_RECEIVE";
     }
 }

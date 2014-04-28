@@ -1,10 +1,11 @@
 package ca.ulaval.ima.miniprojet.activity;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -17,8 +18,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 public class ViewMapActivity extends FragmentActivity{
+	
+	private GoogleMap mMap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,29 +34,53 @@ public class ViewMapActivity extends FragmentActivity{
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
 		
+		isGooglePlayAvailable();
+		//initialise la map si elle n'existe pas déjà
+		SetUpMapifNeeded();
+		
         LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         LocationListener mlocListener = new MyLocationListener();
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
 
+        //Obtient les coordonnées les plus récentes.
         Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		
         
-		
 		//checking if google play services is available on the device.
 		GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-		GoogleMap map = ((SupportMapFragment)  getSupportFragmentManager().findFragmentById(R.id.map))
-	               .getMap();
-		map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+		//GoogleMap map = ((SupportMapFragment)  getSupportFragmentManager().findFragmentById(R.id.map))
+	     //          .getMap();
+		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 		
-		Marker mMarker = map.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())));
+		Marker mMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())));
 		mMarker.setTitle("Quebec");
 	    CameraUpdate center=
 	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
 	            		lastKnownLocation.getLongitude()));
 	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
 
-	        map.moveCamera(center);
-	        map.animateCamera(zoom);
+	        mMap.moveCamera(center);
+	        mMap.animateCamera(zoom);
+	}
+	
+	private void SetUpMapifNeeded() {
+		if (mMap == null) {
+			mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+			if (mMap != null) {
+				//La map existe
+			}
+		}
+	}
+	
+	private void isGooglePlayAvailable(){
+		int av = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+		if (av != ConnectionResult.SUCCESS) {
+			Toast.makeText( getApplicationContext(),"" +"Google Play Services Unavailable\n "+"" +
+					"This application requires Google Play Services to work",Toast.LENGTH_SHORT).show();
+			this.finish();
+		} else {
+			//Google Play Services are available
+		}
 	}
 	
     public class MyLocationListener implements LocationListener {
@@ -76,11 +104,6 @@ public class ViewMapActivity extends FragmentActivity{
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras){
         }
-}
-
-	// Register the listener with the Location Manager to receive location updates
-
-	
-	
+    }
 	
 }

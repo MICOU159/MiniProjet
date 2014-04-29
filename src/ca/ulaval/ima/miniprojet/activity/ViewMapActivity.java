@@ -114,15 +114,23 @@ public class ViewMapActivity extends FragmentActivity{
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
 	
 		//Vérifie si goodleplay est available
+		Log.d("ViewMap", "Is google play available?");
 		isGooglePlayAvailable();
+		Log.d("ViewMap", "Google play is available");
 		
 		//initialise la map si elle n'existe pas déjà
+		Log.d("ViewMap", "Setting up the map");
 		SetUpMapifNeeded();
+		Log.d("ViewMap", "The map is set up");
 
 		//initialise le tableau d'information json
+		Log.d("ViewMap", "Loading extra marker info");
 		loadExtraMarkerInfo();
+		Log.d("ViewMap", "Extra marker info is loaded");
 		//Crée le tableau de marker
+		Log.d("ViewMap", "Generating marker array?");
 		generateMarkerArray();
+		Log.d("ViewMap", "Marker array is generated");
 		
 		//Une fois les deux étapes précédantes faites, les marker sont sur la map.
 		
@@ -130,9 +138,11 @@ public class ViewMapActivity extends FragmentActivity{
 		//Devrait peutêtre faire ce qui suit dans setupmap?
 		
         //Obtient les coordonnées les plus récentes.
-        Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		Log.d("ViewMap", "Getting last known location");
+		Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         //information pour centré et zoomer sur la position de l'utilisateur
-	    CameraUpdate center=
+		Log.d("ViewMap", "Centering camera");
+		CameraUpdate center=
 	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
 	            		lastKnownLocation.getLongitude()));
 	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
@@ -152,6 +162,7 @@ public class ViewMapActivity extends FragmentActivity{
 	            @Override
 	            public View getInfoContents(Marker arg0) {
 
+	            	Log.d("ViewMap - getInfoContent", "Setting values to InfoWindow");
 	                // Getting view from the layout file info_window_layout
 	                View v = getLayoutInflater().inflate(R.layout.custom_map_marker, null);
 	        		
@@ -178,6 +189,7 @@ public class ViewMapActivity extends FragmentActivity{
             mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() { 
             	    @Override
 	  			    public void onInfoWindowClick(Marker marker){
+            	    	Log.d("ViewMap - OnInfoWindowClick", "InfoWindow has been clicked");
 	  			      //Intent nextScreen = new Intent(MapsActivity.this,EventActivity.class);
 	  			        //mettre les ExtraMarkerInfo dans les extras pour les passer à la fenêtre suivante.
 	  			      	//nextScreen.putExtra("userId", "" + userId);
@@ -193,6 +205,7 @@ public class ViewMapActivity extends FragmentActivity{
 		//pas certain que comment aller chercher l'url avec le code du TP.
 		//String urlToLoad=Util.getFormatedAPIURL(getApplicationContext(), "brands/");
 		//HttpCustomRequest request = new HttpCustomRequest(this,urlToLoad);
+		Log.d("ViewMap", "Setting up for HttpCustomRequest");
 		HttpCustomRequest connection = new HttpCustomRequest(this,url + "requests/"); //vac chercher la liste des annonces.
 		ASyncURLRequest loadRequest = new ASyncURLRequest(){
 			@Override
@@ -255,8 +268,10 @@ public class ViewMapActivity extends FragmentActivity{
 	//Fait l'array de marker et le hashmap de markerExtraInfo associé à chaque marker de l'array.
 	//L'association est faite à partir de l'id du marker.
 	private void generateMarkerArray() {
+		Log.d("ViewMap - generateMarkerArray", "Beginning the marker array generation");
 		Iterator<HashMap<String,String>> it = hashmapArray.iterator();
 		while (it.hasNext()) {
+			Log.d("ViewMap - generateMarkerArray", "Adding a marker to the array");
 			HashMap<String,String> obj = it.next();
 			Marker m = mMap.addMarker(new MarkerOptions()
 					   .title(obj.get(TAG_USERNAME))
@@ -276,6 +291,7 @@ public class ViewMapActivity extends FragmentActivity{
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 			if (mMap != null) {
 				//La map existe
+				Log.d("ViewMap - setupmapifneeded", "Map already in memory");
 			}
 		}
 	}
@@ -288,6 +304,7 @@ public class ViewMapActivity extends FragmentActivity{
 			this.finish();
 		} else {
 			//Google Play Services are available
+			Log.d("ViewMap - isGooglePlayAvailable", "Googleplay is avaiable");
 		}
 	}
 	

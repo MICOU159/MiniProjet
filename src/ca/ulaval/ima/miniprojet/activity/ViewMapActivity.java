@@ -52,39 +52,11 @@ public class ViewMapActivity extends FragmentActivity{
     private static final String TAG_STATUS = "status";  //est un boolean
 	
     //À des fins de test
-	private final String jsonString = "request = {" + 
-            "id : 2,"+   //généré par le serveur
-            "username : 'bob',"+
-            "position : '',"+
-            "latitude : 46.777539,"+
-            "longitude : -71.27237,"+
-            "destination: '',"+
-            "persons_count :4,"+
-            "messages = [],"+  //une liste
-            "status = 0"+   //0: non-répondu, 1:répondu...
-            "},"+
-            "{" + 
-                "id : 2,"+   //généré par le serveur
-                "username : 'Ju',"+
-                "position : '',"+
-                "latitude : 46.778739,"+
-                "longitude : -71.27337,"+
-                "destination: '',"+
-                "persons_count :4,"+
-                "messages = [],"+  //une liste
-                "status = 0"+   //0: non-répondu, 1:répondu...
-                "},"+
-                "{" + 
-                    "id : 2,"+   //généré par le serveur
-                    "username : 'joe',"+
-                    "position : '',"+
-                    "latitude : 46.779139,"+
-                    "longitude : -71.27037,"+
-                    "destination: '',"+
-                    "persons_count :4,"+
-                    "messages = [],"+  //une liste
-                    "status = 0"+   //0: non-répondu, 1:répondu...
-                    "},";
+	private final String jsonString = "{\"request\":[{\"id\" : \"1\",\"username\" : \"Joe\",\"position\" : \"\"," +
+        "\"latitude\" : \"46.777439\",\"longitude\" : \"-71.27037\",\"destination\" : \"Quebec\",\"persons_count\" :\"2\"," +
+		"\"messages\" : [],\"status\" : \"0\"},{\"id\" : \"2\",\"username\" : \"bob\",\"position\" : \"\"," +
+        "\"latitude\" : \"46.777539\",\"longitude\" : \"-71.27237\",\"destination\" : \"Montreal\",\"persons_count\" :\"4\"," +
+		"\"messages\" : [],\"status\" : \"0\"}]}";
     
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
@@ -203,24 +175,25 @@ public class ViewMapActivity extends FragmentActivity{
 	        
 	private void loadExtraMarkerInfo(){
 		//pas certain que comment aller chercher l'url avec le code du TP.
-		//String urlToLoad=Util.getFormatedAPIURL(getApplicationContext(), "brands/");
-		//HttpCustomRequest request = new HttpCustomRequest(this,urlToLoad);
-		Log.d("ViewMap", "Setting up for HttpCustomRequest");
-		HttpCustomRequest connection = new HttpCustomRequest(this,url + "requests/"); //vac chercher la liste des annonces.
-		ASyncURLRequest loadRequest = new ASyncURLRequest(){
-			@Override
-			protected void onPostExecute(String s){
-
-				if(s==null){
+//		Log.d("ViewMap", "Setting up for HttpCustomRequest");
+//		HttpCustomRequest connection = new HttpCustomRequest(this,url + "requests/"); //vac chercher la liste des annonces.
+//		ASyncURLRequest loadRequest = new ASyncURLRequest(){
+//			@Override
+//			protected void onPostExecute(String s){
+		String s;
+				//if(s==null){
 					Log.d("ViewMap - RequestsJSON", "The requests list is null");
-					return;
-				}
+					Log.d("ViewMap - RequestsJSON", "Setting up a dummy JSON string");
+					s = jsonString;
+					
+//					return;
+//				}
 				
 				try {
 					JSONObject inData = new JSONObject(s);
 					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
 					
-					JSONArray requests = inData.getJSONArray(TAG_ID);
+					JSONArray requests = inData.getJSONArray("request"); //ou "requests"?
 					for (int i=0;i<requests.length();i++){
 						JSONObject obj = requests.getJSONObject(i);
 						String id = obj.getString(TAG_ID);
@@ -258,10 +231,10 @@ public class ViewMapActivity extends FragmentActivity{
 				}
 				Log.d("ViewMap - LoadMarkerExtraInfo", "hashmapArray "+hashmapArray);
 			}
-		};
+//		};
 		//log : connexion invalide?
-		loadRequest.execute(connection);
-	}
+//		loadRequest.execute(connection);
+//	}
 
  
 	

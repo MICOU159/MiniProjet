@@ -1,10 +1,6 @@
 package ca.ulaval.ima.miniprojet.activity;
 
 import ca.ulaval.ima.miniprojet.R;
-import ca.ulaval.ima.miniprojet.R.id;
-import ca.ulaval.ima.miniprojet.R.layout;
-import ca.ulaval.ima.miniprojet.R.menu;
-import ca.ulaval.ima.miniprojet.R.string;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;

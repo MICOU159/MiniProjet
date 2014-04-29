@@ -1,31 +1,103 @@
 package ca.ulaval.ima.miniprojet.activity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 
+import ca.ulaval.ima.miniprojet.util.ASyncURLRequest;
+import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
+import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.R;
 import ca.ulaval.ima.miniprojet.activity.MainActivity.PlaceholderFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ViewMapActivity extends FragmentActivity{
 	
+    // JSON Node names
+	private static final String TAG_ID = "id"; //est un int
+    private static final String TAG_USERNAME = "username";
+    private static final String TAG_DESTINATION = "destination"; 
+    private static final String TAG_POSITION = "position"; //might go
+    private static final String TAG_LATITUDE = "latitude"; //double
+    private static final String TAG_LONGITUDE = "longitude"; //double
+    private static final String TAG_PERSONS_COUNT = "persons_count";
+    private static final String TAG_MESSAGES = "messages"; //est une liste.. voir plus tard comment géré
+    private static final String TAG_STATUS = "status";  //est un boolean
+	
+    //À des fins de test
+	private final String jsonString = "request = {" + 
+            "id : 2,"+   //généré par le serveur
+            "username : 'bob',"+
+            "position : '',"+
+            "latitude : 46.777539,"+
+            "longitude : -71.27237,"+
+            "destination: '',"+
+            "persons_count :4,"+
+            "messages = [],"+  //une liste
+            "status = 0"+   //0: non-répondu, 1:répondu...
+            "},"+
+            "{" + 
+                "id : 2,"+   //généré par le serveur
+                "username : 'Ju',"+
+                "position : '',"+
+                "latitude : 46.778739,"+
+                "longitude : -71.27337,"+
+                "destination: '',"+
+                "persons_count :4,"+
+                "messages = [],"+  //une liste
+                "status = 0"+   //0: non-répondu, 1:répondu...
+                "},"+
+                "{" + 
+                    "id : 2,"+   //généré par le serveur
+                    "username : 'joe',"+
+                    "position : '',"+
+                    "latitude : 46.779139,"+
+                    "longitude : -71.27037,"+
+                    "destination: '',"+
+                    "persons_count :4,"+
+                    "messages = [],"+  //une liste
+                    "status = 0"+   //0: non-répondu, 1:répondu...
+                    "},";
+    
+	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
+
+	//Tableau de HashMap. Chaque HashMap est l'information d'une request (username,destination,etc.)
+	private ArrayList<HashMap<String, String>> hashmapArray = new ArrayList<HashMap<String,String>>();
+	//Tableau de marker. Chaque marker créé est dans ce tableau.
+	private ArrayList<Marker> markerArray = new ArrayList<Marker>();
+	//HashMap de d'information sur chaque marker. La clé est l'id du marker et le HashMap contient l'information
+	//associé au marker identifié.
+	private HashMap<String, HashMap<String,String>> markerExtraInfo = new HashMap<String, HashMap<String,String>>();
+	JSONArray jSONrequests;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,35 +109,37 @@ public class ViewMapActivity extends FragmentActivity{
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
 		
-		isGooglePlayAvailable();
-		//initialise la map si elle n'existe pas déjà
-		SetUpMapifNeeded();
-		
         LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         LocationListener mlocListener = new MyLocationListener();
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+	
+		//Vérifie si goodleplay est available
+		isGooglePlayAvailable();
+		
+		//initialise la map si elle n'existe pas déjà
+		SetUpMapifNeeded();
 
+		//initialise le tableau d'information json
+		loadExtraMarkerInfo();
+		//Crée le tableau de marker
+		generateMarkerArray();
+		
+		//Une fois les deux étapes précédantes faites, les marker sont sur la map.
+		
+		
+		//Devrait peutêtre faire ce qui suit dans setupmap?
+		
         //Obtient les coordonnées les plus récentes.
         Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		
-        
-		//checking if google play services is available on the device.
-		GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-		//GoogleMap map = ((SupportMapFragment)  getSupportFragmentManager().findFragmentById(R.id.map))
-	     //          .getMap();
-		mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-		
+        //information pour centré et zoomer sur la position de l'utilisateur
 	    CameraUpdate center=
 	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
 	            		lastKnownLocation.getLongitude()));
 	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
-
 	        mMap.moveCamera(center);
 	        mMap.animateCamera(zoom);
-	        
-	        
-	        
-	        // Setting a custom info window adapter for the google map
+
+	        //Setting a custom info window adapter for the google map
 	        mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
 
 	            // Use default InfoWindow frame
@@ -80,10 +154,7 @@ public class ViewMapActivity extends FragmentActivity{
 
 	                // Getting view from the layout file info_window_layout
 	                View v = getLayoutInflater().inflate(R.layout.custom_map_marker, null);
-
-	                // Getting the position from the marker
-	                LatLng latLng = arg0.getPosition();
-
+	        		
 	                // Getting reference to the TextViews
 	                TextView lbUsername = (TextView) v.findViewById(R.id.txtUsername);
 	                TextView lbDestination = (TextView) v.findViewById(R.id.txtDestination);
@@ -91,26 +162,118 @@ public class ViewMapActivity extends FragmentActivity{
 	                TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
 	                
 	                // Setting the values
-	                lbUsername.setText("Joe");
-	                lbDestination.setText("Montréal");
-	                lbPassengers.setText("3");
-	                lbMessage.setText("30$ tip for a ride!"); //problème d'affichage si message trop long
+	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERNAME));
+	                lbDestination.setText(markerExtraInfo.get(arg0.getId()).get(TAG_DESTINATION));
+	                lbPassengers.setText(markerExtraInfo.get(arg0.getId()).get(TAG_PERSONS_COUNT));
+	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES));; //problème d'affichage si message trop long
 
 	                // Returning the view containing InfoWindow contents
 	                return v;
-
 	            }
+
 	        });
 	        
+	        //Comportement d'un click sur une info window.
+	        //Devra passer l'info du marquer à une nouvelle activité
+            mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() { 
+            	    @Override
+	  			    public void onInfoWindowClick(Marker marker){
+	  			      //Intent nextScreen = new Intent(MapsActivity.this,EventActivity.class);
+	  			        //mettre les ExtraMarkerInfo dans les extras pour les passer à la fenêtre suivante.
+	  			      	//nextScreen.putExtra("userId", "" + userId);
+	  			        //nextScreen.putExtra("eventId", "" + eventId);
+
+	  			        //startActivityForResult(nextScreen, 0);
+	  			    }
+	  			  });
 	        
-			Marker mMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())));
-			mMarker.setTitle("Request");
+	} //fin de onCreate
 	        
+	private void loadExtraMarkerInfo(){
+		//pas certain que comment aller chercher l'url avec le code du TP.
+		//String urlToLoad=Util.getFormatedAPIURL(getApplicationContext(), "brands/");
+		//HttpCustomRequest request = new HttpCustomRequest(this,urlToLoad);
+		HttpCustomRequest connection = new HttpCustomRequest(this,url + "requests/"); //vac chercher la liste des annonces.
+		ASyncURLRequest loadRequest = new ASyncURLRequest(){
+			@Override
+			protected void onPostExecute(String s){
+
+				if(s==null){
+					Log.d("ViewMap - RequestsJSON", "The requests list is null");
+					return;
+				}
+				
+				try {
+					JSONObject inData = new JSONObject(s);
+					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
+					
+					JSONArray requests = inData.getJSONArray(TAG_ID);
+					for (int i=0;i<requests.length();i++){
+						JSONObject obj = requests.getJSONObject(i);
+						String id = obj.getString(TAG_ID);
+						String username = obj.getString(TAG_USERNAME);
+						String destination = obj.getString(TAG_DESTINATION);
+						String position = obj.getString(TAG_POSITION);
+						String latitude = obj.getString(TAG_LATITUDE);
+						String longitude = obj.getString(TAG_LONGITUDE);
+						String persons_count = obj.getString(TAG_PERSONS_COUNT);
+						String messages = obj.getString(TAG_MESSAGES);
+						String status = obj.getString(TAG_STATUS);
+
+						Log.d("ViewMap - LoadMarkerExtraInfo", "JSONObj "+obj);
+						
+			            // temp hashmap
+			            HashMap<String, String> tempHMap = new HashMap<String, String>();
+			            
+			            tempHMap.put(TAG_ID, id);
+			            tempHMap.put(TAG_USERNAME, username);
+			            tempHMap.put(TAG_DESTINATION, destination);
+			            tempHMap.put(TAG_POSITION, position);
+			            tempHMap.put(TAG_LATITUDE, latitude);
+			            tempHMap.put(TAG_LONGITUDE, longitude);
+			            tempHMap.put(TAG_PERSONS_COUNT, persons_count);
+			            tempHMap.put(TAG_MESSAGES, messages);
+			            tempHMap.put(TAG_STATUS, status);
+						
+			            //Array qui contient tous les objets JSON sous forme de HashMap
+						hashmapArray.add(tempHMap);
+
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					Log.d("ViewMap - JSON parser", "json parsing error : " + e.toString());
+				}
+				Log.d("ViewMap - LoadMarkerExtraInfo", "hashmapArray "+hashmapArray);
+			}
+		};
+		//log : connexion invalide?
+		loadRequest.execute(connection);
 	}
+
+ 
 	
+	//Fait l'array de marker et le hashmap de markerExtraInfo associé à chaque marker de l'array.
+	//L'association est faite à partir de l'id du marker.
+	private void generateMarkerArray() {
+		Iterator<HashMap<String,String>> it = hashmapArray.iterator();
+		while (it.hasNext()) {
+			HashMap<String,String> obj = it.next();
+			Marker m = mMap.addMarker(new MarkerOptions()
+					   .title(obj.get(TAG_USERNAME))
+					   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
+							   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
+							   				
+				   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 
+				   //est associée à la clé du marker  			   				
+				   markerExtraInfo.put(m.getId(), obj);
+				   markerArray.add(m);					
+		}
+	}
+
 	private void SetUpMapifNeeded() {
 		if (mMap == null) {
 			mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 			if (mMap != null) {
 				//La map existe
 			}

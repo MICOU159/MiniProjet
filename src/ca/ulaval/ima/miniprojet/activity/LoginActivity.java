@@ -330,11 +330,11 @@ public class LoginActivity extends Activity {
 		        OutputStream out = new BufferedOutputStream(conn.getOutputStream());
 		        writeStream(out);
 		        
-		        
-		        
+		        Log.d("debug", "Asking for responseCode");
 		        int response = conn.getResponseCode();
 		        Log.d("debug", "The responseCode is: " + response);
 		        is = conn.getInputStream();
+
 
 		        // Convert the InputStream into a string
 		        /*String contentAsString = readIt(is, len);
@@ -396,7 +396,10 @@ public class LoginActivity extends Activity {
 			
 			String body = json.toString();*/
 			
-			String body = "{\"username\":\"" + "joe"+ "\",\"password\":\" " + "qwert" + "\"}";
+			//String body = "{\"username\":\"" + "joe"+ "\",\"password\":\" " + "qwert" + "\"}";
+			String body =  "{\"username\": \"joe2@gmail.com\",\"password\": \"qwert\"}";
+			
+			Log.d("LoginActivity", "Trying to send string" + body);
 			
 			byte[] encodedValue = null;
 			try {
@@ -407,10 +410,13 @@ public class LoginActivity extends Activity {
 			}
 			if(encodedValue != null){
 				try {
+					Log.d("LoginActivity", "encoded value isnt null!" + encodedValue.toString());
 					out.write(encodedValue);
-					//out.close();
+					out.flush();
+					out.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					Log.d("LoginActivity", "encoded value is null!");
 					e.printStackTrace();
 				} finally{
 					/*if (out != null) {

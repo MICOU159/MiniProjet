@@ -41,23 +41,16 @@ import android.widget.Toast;
 public class ViewMapActivity extends FragmentActivity{
 	
     // JSON Node names
-	private static final String TAG_ID = "id"; //est un int
-    private static final String TAG_USERNAME = "username";
+	private static final String TAG_ID = "id";
+    private static final String TAG_USERID = "userID";
     private static final String TAG_DESTINATION = "destination"; 
-    private static final String TAG_POSITION = "position"; //might go
-    private static final String TAG_LATITUDE = "latitude"; //double
-    private static final String TAG_LONGITUDE = "longitude"; //double
+    private static final String TAG_POSITION = "position"; 
+    private static final String TAG_LATITUDE = "lalitude"; //  <----------LOL lalitude
+    private static final String TAG_LONGITUDE = "longitude";
     private static final String TAG_PERSONS_COUNT = "persons_count";
-    private static final String TAG_MESSAGES = "messages"; //est une liste.. voir plus tard comment géré
-    private static final String TAG_STATUS = "status";  //est un boolean
+    private static final String TAG_MESSAGES = "messages"; 
+    private static final String TAG_STATUS = "status"; 
 	
-    //À des fins de test
-	private final String jsonString = "{\"request\":[{\"id\" : \"1\",\"username\" : \"Joe\",\"position\" : \"\"," +
-        "\"latitude\" : \"46.777439\",\"longitude\" : \"-71.27037\",\"destination\" : \"Quebec\",\"persons_count\" :\"2\"," +
-		"\"messages\" : [],\"status\" : \"0\"},{\"id\" : \"2\",\"username\" : \"bob\",\"position\" : \"\"," +
-        "\"latitude\" : \"46.777539\",\"longitude\" : \"-71.27237\",\"destination\" : \"Montreal\",\"persons_count\" :\"4\"," +
-		"\"messages\" : [],\"status\" : \"0\"}]}";
-    
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
 
@@ -145,7 +138,7 @@ public class ViewMapActivity extends FragmentActivity{
 	                TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
 	                
 	                // Setting the values
-	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERNAME));
+	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERID));
 	                lbDestination.setText(markerExtraInfo.get(arg0.getId()).get(TAG_DESTINATION));
 	                lbPassengers.setText(markerExtraInfo.get(arg0.getId()).get(TAG_PERSONS_COUNT));
 	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES));; //problème d'affichage si message trop long
@@ -175,33 +168,29 @@ public class ViewMapActivity extends FragmentActivity{
 	        
 	private void loadExtraMarkerInfo(){
 		//pas certain que comment aller chercher l'url avec le code du TP.
-//		Log.d("ViewMap", "Setting up for HttpCustomRequest");
-//		HttpCustomRequest connection = new HttpCustomRequest(this,url + "requests/"); //vac chercher la liste des annonces.
-//		ASyncURLRequest loadRequest = new ASyncURLRequest(){
-//			@Override
-//			protected void onPostExecute(String s){
-		String s;
-				//if(s==null){
+		Log.d("ViewMap", "Setting up for HttpCustomRequest");
+		HttpCustomRequest connection = new HttpCustomRequest(this, url + "requests/");
+		ASyncURLRequest loadRequest = new ASyncURLRequest(){
+			@Override
+			protected void onPostExecute(String s){
+				if(s==null){
 					Log.d("ViewMap - RequestsJSON", "The requests list is null");
-					Log.d("ViewMap - RequestsJSON", "Setting up a dummy JSON string");
-					s = jsonString;
-					
-//					return;
-//				}
+					return;
+				}
 				
 				try {
-					JSONObject inData = new JSONObject(s);
+					Log.d("JSON STRING ANVEC REQUEST", "{\"requests\":" + s +"}"); // peut-être touver façon moins broche à foin
+					JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
 					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
 					
-					JSONArray requests = inData.getJSONArray("request"); //ou "requests"?
+					JSONArray requests = inData.getJSONArray("requests");
 					for (int i=0;i<requests.length();i++){
 						JSONObject obj = requests.getJSONObject(i);
 						String id = obj.getString(TAG_ID);
-						String username = obj.getString(TAG_USERNAME);
+						String userId = obj.getString(TAG_USERID);
 						String destination = obj.getString(TAG_DESTINATION);
-						String position = obj.getString(TAG_POSITION);
-						String latitude = obj.getString(TAG_LATITUDE);
-						String longitude = obj.getString(TAG_LONGITUDE);
+						String latitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LATITUDE);
+						String longitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LONGITUDE);
 						String persons_count = obj.getString(TAG_PERSONS_COUNT);
 						String messages = obj.getString(TAG_MESSAGES);
 						String status = obj.getString(TAG_STATUS);
@@ -212,9 +201,8 @@ public class ViewMapActivity extends FragmentActivity{
 			            HashMap<String, String> tempHMap = new HashMap<String, String>();
 			            
 			            tempHMap.put(TAG_ID, id);
-			            tempHMap.put(TAG_USERNAME, username);
+			            tempHMap.put(TAG_USERID, userId);
 			            tempHMap.put(TAG_DESTINATION, destination);
-			            tempHMap.put(TAG_POSITION, position);
 			            tempHMap.put(TAG_LATITUDE, latitude);
 			            tempHMap.put(TAG_LONGITUDE, longitude);
 			            tempHMap.put(TAG_PERSONS_COUNT, persons_count);
@@ -222,19 +210,18 @@ public class ViewMapActivity extends FragmentActivity{
 			            tempHMap.put(TAG_STATUS, status);
 						
 			            //Array qui contient tous les objets JSON sous forme de HashMap
+			            
 						hashmapArray.add(tempHMap);
-
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 					Log.d("ViewMap - JSON parser", "json parsing error : " + e.toString());
 				}
-				Log.d("ViewMap - LoadMarkerExtraInfo", "hashmapArray "+hashmapArray);
+				Log.d("ViewMap - LoadMarkerExtraInfo", "hashmapArray" +hashmapArray.toString());
 			}
-//		};
-		//log : connexion invalide?
-//		loadRequest.execute(connection);
-//	}
+		};
+		loadRequest.execute(connection);
+	}
 
  
 	
@@ -242,14 +229,18 @@ public class ViewMapActivity extends FragmentActivity{
 	//L'association est faite à partir de l'id du marker.
 	private void generateMarkerArray() {
 		Log.d("ViewMap - generateMarkerArray", "Beginning the marker array generation");
+		if (hashmapArray.isEmpty()) {
+			Log.d("ViewMap - generateMarkerArray", "hashmapArray is empty!");
+		}
 		Iterator<HashMap<String,String>> it = hashmapArray.iterator();
 		while (it.hasNext()) {
 			Log.d("ViewMap - generateMarkerArray", "Adding a marker to the array");
 			HashMap<String,String> obj = it.next();
 			Marker m = mMap.addMarker(new MarkerOptions()
-					   .title(obj.get(TAG_USERNAME))
+					   .title(obj.get(TAG_USERID))
 					   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
 							   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
+			
 							   				
 				   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 
 				   //est associée à la clé du marker  			   				

@@ -26,11 +26,9 @@ import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.R;
 import ca.ulaval.ima.miniprojet.activity.MainActivity.PlaceholderFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -43,6 +41,7 @@ public class ViewMapActivity extends FragmentActivity{
     // JSON Node names
 	private static final String TAG_ID = "id";
     private static final String TAG_USERID = "userID";
+	//private static final String TAG_USERNAME = "username";
     private static final String TAG_DESTINATION = "destination"; 
     private static final String TAG_POSITION = "position"; 
     private static final String TAG_LATITUDE = "lalitude"; //  <----------LOL lalitude
@@ -54,8 +53,11 @@ public class ViewMapActivity extends FragmentActivity{
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
 
+
 	//Tableau de HashMap. Chaque HashMap est l'information d'une request (username,destination,etc.)
 	private ArrayList<HashMap<String, String>> hashmapArray = new ArrayList<HashMap<String,String>>();
+	
+	//private ArrayAdapter<HashMap<String,String>> hashmapArray;
 	//Tableau de marker. Chaque marker créé est dans ce tableau.
 	private ArrayList<Marker> markerArray = new ArrayList<Marker>();
 	//HashMap de d'information sur chaque marker. La clé est l'id du marker et le HashMap contient l'information
@@ -69,11 +71,14 @@ public class ViewMapActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_viewmap);
 
-		if (savedInstanceState == null) {
+		if (savedInstanceState != null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
-		
+
+
+		//hashmapArray = new ArrayAdapter<HashMap<String, String>>(this,R.id.map);
+
         LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         LocationListener mlocListener = new MyLocationListener();
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
@@ -88,19 +93,8 @@ public class ViewMapActivity extends FragmentActivity{
 		SetUpMapifNeeded();
 		Log.d("ViewMap", "The map is set up");
 
-		//initialise le tableau d'information json
-		Log.d("ViewMap", "Loading extra marker info");
-		loadExtraMarkerInfo();
-		Log.d("ViewMap", "Extra marker info is loaded");
-		//Crée le tableau de marker
-		Log.d("ViewMap", "Generating marker array?");
-		generateMarkerArray();
-		Log.d("ViewMap", "Marker array is generated");
-		
-		//Une fois les deux étapes précédantes faites, les marker sont sur la map.
-		
-		
-		//Devrait peutêtre faire ce qui suit dans setupmap?
+		//initialise les marqueurs sur la carte
+		loadMapMarkers();
 		
         //Obtient les coordonnées les plus récentes.
 		Log.d("ViewMap", "Getting last known location");
@@ -110,7 +104,7 @@ public class ViewMapActivity extends FragmentActivity{
 		CameraUpdate center=
 	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
 	            		lastKnownLocation.getLongitude()));
-	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
+	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
 	        mMap.moveCamera(center);
 	        mMap.animateCamera(zoom);
 
@@ -164,10 +158,9 @@ public class ViewMapActivity extends FragmentActivity{
 	  			    }
 	  			  });
 	        
-	} //fin de onCreate
+	}//fin de onCreate
 	        
-	private void loadExtraMarkerInfo(){
-		//pas certain que comment aller chercher l'url avec le code du TP.
+		private void loadMapMarkers(){
 		Log.d("ViewMap", "Setting up for HttpCustomRequest");
 		HttpCustomRequest connection = new HttpCustomRequest(this, url + "requests/");
 		ASyncURLRequest loadRequest = new ASyncURLRequest(){
@@ -179,12 +172,13 @@ public class ViewMapActivity extends FragmentActivity{
 				}
 				
 				try {
-					Log.d("JSON STRING ANVEC REQUEST", "{\"requests\":" + s +"}"); // peut-être touver façon moins broche à foin
 					JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
 					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
 					
 					JSONArray requests = inData.getJSONArray("requests");
+					Log.d("ViewMap - RequestsJSON", "LE JSONOBJECT CONVERTI EN JSONARRAY" + requests.toString());
 					for (int i=0;i<requests.length();i++){
+						
 						JSONObject obj = requests.getJSONObject(i);
 						String id = obj.getString(TAG_ID);
 						String userId = obj.getString(TAG_USERID);
@@ -210,44 +204,31 @@ public class ViewMapActivity extends FragmentActivity{
 			            tempHMap.put(TAG_STATUS, status);
 						
 			            //Array qui contient tous les objets JSON sous forme de HashMap
-			            
 						hashmapArray.add(tempHMap);
+
+					}
+					
+					//Populating the map once the array is loaded.
+					Iterator<HashMap<String,String>> it = hashmapArray.iterator();
+					while (it.hasNext()) {
+						HashMap<String,String> obj = it.next();
+						Marker m = mMap.addMarker(new MarkerOptions()
+								   .title(obj.get(TAG_USERID))
+								   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
+										   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
+							   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 
+							   //est associée à la clé du marker  			   				
+							   markerExtraInfo.put(m.getId(), obj);
+							   markerArray.add(m);					
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
-					Log.d("ViewMap - JSON parser", "json parsing error : " + e.toString());
 				}
-				Log.d("ViewMap - LoadMarkerExtraInfo", "hashmapArray" +hashmapArray.toString());
 			}
 		};
 		loadRequest.execute(connection);
 	}
 
- 
-	
-	//Fait l'array de marker et le hashmap de markerExtraInfo associé à chaque marker de l'array.
-	//L'association est faite à partir de l'id du marker.
-	private void generateMarkerArray() {
-		Log.d("ViewMap - generateMarkerArray", "Beginning the marker array generation");
-		if (hashmapArray.isEmpty()) {
-			Log.d("ViewMap - generateMarkerArray", "hashmapArray is empty!");
-		}
-		Iterator<HashMap<String,String>> it = hashmapArray.iterator();
-		while (it.hasNext()) {
-			Log.d("ViewMap - generateMarkerArray", "Adding a marker to the array");
-			HashMap<String,String> obj = it.next();
-			Marker m = mMap.addMarker(new MarkerOptions()
-					   .title(obj.get(TAG_USERID))
-					   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
-							   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
-			
-							   				
-				   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 
-				   //est associée à la clé du marker  			   				
-				   markerExtraInfo.put(m.getId(), obj);
-				   markerArray.add(m);					
-		}
-	}
 
 	private void SetUpMapifNeeded() {
 		if (mMap == null) {

@@ -1,16 +1,24 @@
 package ca.ulaval.ima.miniprojet.activity;
 
 import ca.ulaval.ima.miniprojet.R;
+import ca.ulaval.ima.miniprojet.model.PositionModel;
+import ca.ulaval.ima.miniprojet.model.RequestModel;
+import ca.ulaval.ima.miniprojet.model.UserModel;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class MakeRequestActivity extends Activity {
+	private UserModel currentUser = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +29,8 @@ public class MakeRequestActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
+		this.currentUser = this.getIntent().getExtras().getParcelable(MainActivity.CURRENT_USER);
 	}
 
 	@Override
@@ -61,7 +71,48 @@ public class MakeRequestActivity extends Activity {
 	}
 	
 	public void summit(View view){
+		//recupérer val
+		EditText edit= (EditText) findViewById(R.id.inputDestination);
+		String destination = edit.getText().toString();
+		
+		edit= (EditText) findViewById(R.id.inputPersonsCount);
+		String personsCountText = edit.getText().toString();
+		
+		edit= (EditText) findViewById(R.id.inputMessage);
+		String message = edit.getText().toString();
+		
+		if(!destination.isEmpty() && !personsCountText.isEmpty()){
+			
+			//create request
+			String username = this.currentUser.getmUsername();
+			PositionModel position = this.getPosition();
+			int personsCount = Integer.parseInt(personsCountText);
+			
+			RequestModel request = new RequestModel(username, position, destination, personsCount, message);
+			
+			//send request...
+		}
+		
+		
+		
 		this.finish();
+	}
+	
+	private PositionModel getPosition(){
+		
+		PositionModel pos = null;
+		
+		LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        
+        if(lastKnownLocation !=null){
+        	double latitude = lastKnownLocation.getLatitude(); 
+            double longitude = lastKnownLocation.getLongitude();
+            pos = new PositionModel(latitude, longitude);
+        }
+        
+		
+		return pos;
 	}
 
 }

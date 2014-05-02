@@ -10,10 +10,15 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ca.ulaval.ima.miniprojet.util.AsyncCustomURLRequest;
 import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
 import ca.ulaval.ima.miniprojet.R;
@@ -57,6 +62,7 @@ public class LoginActivity extends Activity {
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
+	//private AsyncCustomURLRequest mAuthTask = null;
 
 	// Values for email and password at the time of the login attempt.
 	private String mEmail;
@@ -199,13 +205,63 @@ public class LoginActivity extends Activity {
 			showProgress(true);
 			
 			//------------------------------
-			/*String urlToLoad = Util.getFormatedAPIURL(getApplicationContext(), "login");
+			//En utilisant HttpCustomRequest <----fonctionne pas
+			
+			/*String urlToLoad = Util.getFormatedAPIURL(getApplicationContext(), "users");
 			HttpCustomRequest request = new HttpCustomRequest(this,urlToLoad);
+			
+			//set http method
 			request.setMethod("POST");
 			
-			String reqString = "{'username':" + "'" +mEmail+"'," + "'password':" + "'" +mPassword+ "'" + "}";
-			request.setBody(reqString);*/
+			//set headers
+			List<NameValuePair> headers = new ArrayList<NameValuePair>();
+			headers.add(new BasicNameValuePair("Content-Type", "application/json"));
+			request.setHeaders(headers);
 			
+			//set body
+			JSONObject json = new JSONObject();
+			try {
+				json.put("email", "test");
+				json.put("password", "test");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			String reqString = json.toString();
+			request.setBody(reqString);
+			
+			mAuthTask = new AsyncCustomURLRequest(){
+				@Override
+				protected void onPostExecute(String response) {
+					mAuthTask = null;
+					showProgress(false);
+					finish(); //<-------test
+
+					int responseCode = this.getResponseCode();
+					if (responseCode == 200) { // success
+						//..
+						Log.d("UserLoginTask","login succeed");
+						finish();
+					} else {
+						mPasswordView
+								.setError(getString(R.string.error_incorrect_password));
+						mPasswordView.requestFocus();
+					}
+
+				}
+
+				@Override
+				protected void onCancelled() {
+					mAuthTask = null;
+					showProgress(false);
+				}
+			};
+			
+			mAuthTask.execute(request);
+			*/
+			
+			//-----------------------------------
 			mAuthTask = new UserLoginTask();
 			String url = "http://relaybit.com:2222/users";
 			mAuthTask.execute(url);
@@ -304,7 +360,7 @@ public class LoginActivity extends Activity {
 		    InputStream is = null;
 		    // Only display the first 500 characters of the retrieved
 		    // web page content.
-		    int len = 500;
+		    //int len = 500;
 		        
 		    try {
 		        URL url = new URL(myurl);
@@ -384,9 +440,10 @@ public class LoginActivity extends Activity {
 		
 		private void writeStream(OutputStream out) throws IOException {
 			// TODO Auto-generated method stub
-			/*JSONObject json = new JSONObject();
+			
+			JSONObject json = new JSONObject();
 			try {
-				json.put("username", "nga@gmail.com");
+				json.put("username", "nga2@gmail.com");
 				json.put("password", "qwert");
 				
 			} catch (JSONException e1) {
@@ -394,10 +451,10 @@ public class LoginActivity extends Activity {
 				e1.printStackTrace();
 			}
 			
-			String body = json.toString();*/
+			String body = json.toString();
 			
 			//String body = "{\"username\":\"" + "joe"+ "\",\"password\":\" " + "qwert" + "\"}";
-			String body =  "{\"username\": \"joe2@gmail.com\",\"password\": \"qwert\"}";
+			//String body =  "{\"username\": \"joe2@gmail.com\",\"password\": \"qwert\"}";
 			
 			Log.d("LoginActivity", "Trying to send string" + body);
 			
@@ -425,15 +482,6 @@ public class LoginActivity extends Activity {
 				}
 			}
 			
-		}
-
-		// Reads an InputStream and converts it to a String.
-		public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-		    Reader reader = null;
-		    reader = new InputStreamReader(stream, "UTF-8");        
-		    char[] buffer = new char[len];
-		    reader.read(buffer);
-		    return new String(buffer);
 		}
 	}
 }

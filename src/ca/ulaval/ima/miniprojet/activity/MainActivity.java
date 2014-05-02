@@ -1,6 +1,7 @@
 package ca.ulaval.ima.miniprojet.activity;
 
 import ca.ulaval.ima.miniprojet.R;
+import ca.ulaval.ima.miniprojet.model.UserModel;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -15,6 +16,8 @@ public class MainActivity extends Activity {
 	
 	static final int REQUEST_LOGIN = 1;
 	private boolean loggedIn = false;
+	static final String CURRENT_USER = "CURRENT_USER";
+	private UserModel currentUser = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,7 @@ public class MainActivity extends Activity {
 	
 	public void openRequestForm(View view){
 		Intent intent = new Intent(this, MakeRequestActivity.class);
+		intent.putExtra(CURRENT_USER, this.currentUser);
 		startActivity(intent);
 	}
 	

@@ -43,15 +43,16 @@ public class ViewMapActivity extends FragmentActivity{
 	
     // JSON Node names
 	private static final String TAG_ID = "id";
-    private static final String TAG_USERID = "userID";
-	//private static final String TAG_USERNAME = "username";
+    //private static final String TAG_USERID = "userID";
+	private static final String TAG_USERNAME = "username";
     private static final String TAG_DESTINATION = "destination"; 
     private static final String TAG_POSITION = "position"; 
-    private static final String TAG_LATITUDE = "lalitude"; //  <----------LOL lalitude
+    private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
     private static final String TAG_PERSONS_COUNT = "persons_count";
     private static final String TAG_MESSAGES = "messages"; 
     private static final String TAG_STATUS = "status"; 
+    
 	
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
@@ -135,7 +136,7 @@ public class ViewMapActivity extends FragmentActivity{
 	                TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
 	                
 	                // Setting the values
-	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERID));
+	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERNAME));
 	                lbDestination.setText(markerExtraInfo.get(arg0.getId()).get(TAG_DESTINATION));
 	                lbPassengers.setText(markerExtraInfo.get(arg0.getId()).get(TAG_PERSONS_COUNT));
 	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES)); //problème d'affichage si message trop long
@@ -163,7 +164,7 @@ public class ViewMapActivity extends FragmentActivity{
             			intent.putExtra(TAG_LONGITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LONGITUDE));
             			intent.putExtra(TAG_LATITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LATITUDE));
             			//intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
-            			intent.putExtra(TAG_USERID, markerExtraInfo.get(marker.getId()).get(TAG_USERID));
+            			intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
             			startActivity(intent);
 	  			        //startActivityForResult(nextScreen, 0);
 	  			    }
@@ -192,7 +193,7 @@ public class ViewMapActivity extends FragmentActivity{
 						
 						JSONObject obj = requests.getJSONObject(i);
 						String id = obj.getString(TAG_ID);
-						String userId = obj.getString(TAG_USERID);
+						String username = obj.getString(TAG_USERNAME);
 						String destination = obj.getString(TAG_DESTINATION);
 						String latitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LATITUDE);
 						String longitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LONGITUDE);
@@ -206,7 +207,7 @@ public class ViewMapActivity extends FragmentActivity{
 			            HashMap<String, String> tempHMap = new HashMap<String, String>();
 			            
 			            tempHMap.put(TAG_ID, id);
-			            tempHMap.put(TAG_USERID, userId);
+			            tempHMap.put(TAG_USERNAME, username);
 			            tempHMap.put(TAG_DESTINATION, destination);
 			            tempHMap.put(TAG_LATITUDE, latitude);
 			            tempHMap.put(TAG_LONGITUDE, longitude);
@@ -224,7 +225,7 @@ public class ViewMapActivity extends FragmentActivity{
 					while (it.hasNext()) {
 						HashMap<String,String> obj = it.next();
 						Marker m = mMap.addMarker(new MarkerOptions()
-								   .title(obj.get(TAG_USERID))
+								   .title(obj.get(TAG_USERNAME))
 								   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
 										   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
 							   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 

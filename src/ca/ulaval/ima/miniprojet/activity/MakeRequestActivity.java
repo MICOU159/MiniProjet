@@ -96,7 +96,7 @@ public class MakeRequestActivity extends Activity {
 		edit= (EditText) findViewById(R.id.inputPersonsCount);
 		String personsCountText = edit.getText().toString();
 		
-		edit= (EditText) findViewById(R.id.inputMessage);
+//		edit= (EditText) findViewById(R.id.inputMessage); inputmessage n'existe pas
 		String message = edit.getText().toString();
 		
 		if(!destination.isEmpty() && !personsCountText.isEmpty()){
@@ -107,8 +107,8 @@ public class MakeRequestActivity extends Activity {
 			
 			//create request
 			String username = this.currentUser.getmUsername();
-			//PositionModel position = this.getPosition();  *********************retourne NULL
-			PositionModel position = new PositionModel(46.779139, -71.27037);  //test
+			PositionModel position = this.getPosition();  //fonctionne pour moi
+			//PositionModel position = new PositionModel(46.779139, -71.27037);  //test
 			int personsCount = Integer.parseInt(personsCountText);
 			
 			request = new RequestModel(username, position, destination, personsCount, message);

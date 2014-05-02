@@ -20,12 +20,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 
+import ca.ulaval.ima.miniprojet.model.PositionModel;
+import ca.ulaval.ima.miniprojet.model.RequestModel;
 import ca.ulaval.ima.miniprojet.util.ASyncURLRequest;
 import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
 import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.R;
 import ca.ulaval.ima.miniprojet.activity.MainActivity.PlaceholderFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -52,7 +55,8 @@ public class ViewMapActivity extends FragmentActivity{
 	
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
-
+	Location lastKnownLocation = new Location("dummy");
+	JSONArray jSONrequests;
 
 	//Tableau de HashMap. Chaque HashMap est l'information d'une request (username,destination,etc.)
 	private ArrayList<HashMap<String, String>> hashmapArray = new ArrayList<HashMap<String,String>>();
@@ -63,8 +67,6 @@ public class ViewMapActivity extends FragmentActivity{
 	//HashMap de d'information sur chaque marker. La clé est l'id du marker et le HashMap contient l'information
 	//associé au marker identifié.
 	private HashMap<String, HashMap<String,String>> markerExtraInfo = new HashMap<String, HashMap<String,String>>();
-	JSONArray jSONrequests;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,29 +78,30 @@ public class ViewMapActivity extends FragmentActivity{
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
 
-
-		//hashmapArray = new ArrayAdapter<HashMap<String, String>>(this,R.id.map);
-
         LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         LocationListener mlocListener = new MyLocationListener();
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
 	
 		//Vérifie si goodleplay est available
-		Log.d("ViewMap", "Is google play available?");
 		isGooglePlayAvailable();
-		Log.d("ViewMap", "Google play is available");
 		
 		//initialise la map si elle n'existe pas déjà
-		Log.d("ViewMap", "Setting up the map");
 		SetUpMapifNeeded();
-		Log.d("ViewMap", "The map is set up");
 
 		//initialise les marqueurs sur la carte
 		loadMapMarkers();
 		
+
         //Obtient les coordonnées les plus récentes.
 		Log.d("ViewMap", "Getting last known location");
-		Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		try {
+			lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		} catch  (NullPointerException e) {
+			Log.d("ViewMap", "Last known GPS location is null - Setting up fake location");
+			lastKnownLocation.setAltitude(-1);
+			lastKnownLocation.setLongitude(-1);
+		}
+
         //information pour centré et zoomer sur la position de l'utilisateur
 		Log.d("ViewMap", "Centering camera");
 		CameraUpdate center=
@@ -135,7 +138,7 @@ public class ViewMapActivity extends FragmentActivity{
 	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERID));
 	                lbDestination.setText(markerExtraInfo.get(arg0.getId()).get(TAG_DESTINATION));
 	                lbPassengers.setText(markerExtraInfo.get(arg0.getId()).get(TAG_PERSONS_COUNT));
-	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES));; //problème d'affichage si message trop long
+	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES)); //problème d'affichage si message trop long
 
 	                // Returning the view containing InfoWindow contents
 	                return v;
@@ -149,11 +152,19 @@ public class ViewMapActivity extends FragmentActivity{
             	    @Override
 	  			    public void onInfoWindowClick(Marker marker){
             	    	Log.d("ViewMap - OnInfoWindowClick", "InfoWindow has been clicked");
+
+            	    	
+            	    	
 	  			      //Intent nextScreen = new Intent(MapsActivity.this,EventActivity.class);
 	  			        //mettre les ExtraMarkerInfo dans les extras pour les passer à la fenêtre suivante.
-	  			      	//nextScreen.putExtra("userId", "" + userId);
-	  			        //nextScreen.putExtra("eventId", "" + eventId);
-
+            			Intent intent = new Intent(ViewMapActivity.this, AcceptRequest.class);
+            			intent.putExtra(TAG_DESTINATION, markerExtraInfo.get(marker.getId()).get(TAG_DESTINATION));
+            			intent.putExtra(TAG_PERSONS_COUNT, markerExtraInfo.get(marker.getId()).get(TAG_PERSONS_COUNT));
+            			intent.putExtra(TAG_LONGITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LONGITUDE));
+            			intent.putExtra(TAG_LATITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LATITUDE));
+            			//intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
+            			intent.putExtra(TAG_USERID, markerExtraInfo.get(marker.getId()).get(TAG_USERID));
+            			startActivity(intent);
 	  			        //startActivityForResult(nextScreen, 0);
 	  			    }
 	  			  });

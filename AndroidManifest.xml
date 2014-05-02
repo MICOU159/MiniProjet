@@ -63,6 +63,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.ulaval.ima.miniprojet.activity.MainActivity" />
          </activity>
+         <activity
+            android:name="ca.ulaval.ima.miniprojet.activity.AcceptRequest"
+            android:label="@string/title_activity_accept_request"
+            android:parentActivityName="ca.ulaval.ima.miniprojet.activity.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.ulaval.ima.miniprojet.activity.MainActivity" />
+         </activity>
         
 		<meta-data
   			 android:name="com.google.android.maps.v2.API_KEY"

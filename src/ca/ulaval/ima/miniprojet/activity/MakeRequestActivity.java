@@ -101,16 +101,21 @@ public class MakeRequestActivity extends Activity {
 		
 		if(!destination.isEmpty() && !personsCountText.isEmpty()){
 			
+			if(this.currentUser == null){
+				this.finish();
+			}
+			
 			//create request
 			String username = this.currentUser.getmUsername();
-			PositionModel position = this.getPosition();
+			//PositionModel position = this.getPosition();  *********************retourne NULL
+			PositionModel position = new PositionModel(46.779139, -71.27037);  //test
 			int personsCount = Integer.parseInt(personsCountText);
 			
 			request = new RequestModel(username, position, destination, personsCount, message);
 			
 			//send request...
 			mRequestTask = new SendRequestTask();
-			String url = "http://relaybit.com:2222/users";
+			String url = "http://relaybit.com:2222/requests";
 			mRequestTask.execute(url);
 		}
 	}
@@ -141,13 +146,20 @@ public class MakeRequestActivity extends Activity {
 			 try {
 	                return downloadUrl(urls[0]);
 	            } catch (IOException e) {
-	                return "Unable to retrieve web page. URL may be invalid.";
+	                Log.d("Exeption :", "Unable to retrieve web page. URL may be invalid.");
+	                return null;
 	            }
 		}
 		
 		@Override
 		protected void onPostExecute(String response) {
 			mRequestTask = null;
+			
+			if(response !=null){
+				
+				Log.d("MakeRequestActivity", "sendRequest succeed");
+			}
+			
 			finish(); //<-------test
 
 		}
@@ -230,9 +242,9 @@ public class MakeRequestActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 			
-			String body = request.toString();
+			String body = request.toJSON().toString();
 			
-			Log.d("LoginActivity", "Trying to send string" + body);
+			Log.d("MakeRequestActivity", "Trying to send string" + body);
 			
 			byte[] encodedValue = null;
 			try {
@@ -243,13 +255,13 @@ public class MakeRequestActivity extends Activity {
 			}
 			if(encodedValue != null){
 				try {
-					Log.d("LoginActivity", "encoded value isnt null!" + encodedValue.toString());
+					Log.d("MakeRequestActivity", "encoded value isnt null!" + encodedValue.toString());
 					out.write(encodedValue);
 					out.flush();
 					out.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					Log.d("LoginActivity", "encoded value is null!");
+					Log.d("MakeRequestActivity", "encoded value is null!");
 					e.printStackTrace();
 				} finally{
 					/*if (out != null) {

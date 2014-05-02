@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvDestination"
         android:layout_below="@+id/tvDestination"
-        android:text="Medium Text"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvUsername"
         android:layout_below="@+id/tvUsername"
-        android:text="Medium Text"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvDestination"
         android:layout_alignParentTop="true"
-        android:text="Usernane:"
+        android:text="Username:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -59,18 +59,21 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvNbPassengers"
         android:layout_below="@+id/tvNbPassengers"
-        android:text="Medium Text"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/tvReqAddress"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="200dp"
         android:layout_alignLeft="@+id/tvAddress"
+        android:layout_alignRight="@+id/notify_btn"
         android:layout_below="@+id/tvAddress"
-        android:clickable="false"
+        android:clickable="false" 
+        android:cursorVisible="false" 
+        android:focusable="false" 
+        android:focusableInTouchMode="false"
         android:ems="10"
-        android:inputType="textPostalAddress"
         android:textSize="@dimen/activity_text" />
 
     <TextView

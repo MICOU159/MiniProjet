@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class MainActivity extends Activity {
 	
@@ -29,7 +30,7 @@ public class MainActivity extends Activity {
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -77,6 +78,28 @@ public class MainActivity extends Activity {
 			this.loggedIn = true;
 		}
 	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+	
+	@Override
+	protected void onResume() {
+		if (currentUser != null || loggedIn == true) {
+			Button btn_request = (Button) findViewById(R.id.makeRequest_btn);
+			Button btn_map = (Button) findViewById(R.id.viewMap_btn);
+			Button btn_list = (Button) findViewById(R.id.viewList_btn);
+			Button btn_login = (Button) findViewById(R.id.login_btn);
+			btn_request.setEnabled(true);
+			btn_map.setEnabled(true);
+			btn_list.setEnabled(true);
+			btn_login.setEnabled(false);
+			loggedIn = true;
+		}
+		super.onResume();
+	}
+	
 
 	public void openLoginForm(View view){
 		Intent intent = new Intent(this, LoginActivity.class);
@@ -98,5 +121,6 @@ public class MainActivity extends Activity {
 	public void openList(View view){
 		//...
 	}
+	
 
 }

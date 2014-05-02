@@ -78,10 +78,6 @@ public class ViewMapActivity extends FragmentActivity{
 			getFragmentManager().beginTransaction()
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
-
-        LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        LocationListener mlocListener = new MyLocationListener();
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
 	
 		//Vérifie si goodleplay est available
 		isGooglePlayAvailable();
@@ -92,25 +88,34 @@ public class ViewMapActivity extends FragmentActivity{
 		//initialise les marqueurs sur la carte
 		loadMapMarkers();
 		
-
         //Obtient les coordonnées les plus récentes.
 		Log.d("ViewMap", "Getting last known location");
 		try {
+	        LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+	        LocationListener mlocListener = new MyLocationListener();
+	        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+			
 			lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			
+			Log.d("ViewMap", "Centering camera");
+	        //information pour centré et zoomer sur la position de l'utilisateur
+			CameraUpdate center=
+		            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
+		            		lastKnownLocation.getLongitude()));
+		        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
+		        mMap.moveCamera(center);
+		        mMap.animateCamera(zoom);
 		} catch  (NullPointerException e) {
 			Log.d("ViewMap", "Last known GPS location is null - Setting up fake location");
-			lastKnownLocation.setAltitude(-1);
-			lastKnownLocation.setLongitude(-1);
+			lastKnownLocation.setAltitude(71);
+			lastKnownLocation.setLongitude(-41);
+			CameraUpdate center=
+		            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
+		            		lastKnownLocation.getLongitude()));
+		        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
+		        mMap.moveCamera(center);
+		        mMap.animateCamera(zoom);
 		}
-
-        //information pour centré et zoomer sur la position de l'utilisateur
-		Log.d("ViewMap", "Centering camera");
-		CameraUpdate center=
-	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
-	            		lastKnownLocation.getLongitude()));
-	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
-	        mMap.moveCamera(center);
-	        mMap.animateCamera(zoom);
 
 	        //Setting a custom info window adapter for the google map
 	        mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
@@ -184,7 +189,8 @@ public class ViewMapActivity extends FragmentActivity{
 				}
 				
 				try {
-					JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
+					//JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
+					JSONObject inData = new JSONObject(s);
 					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
 					
 					JSONArray requests = inData.getJSONArray("requests");

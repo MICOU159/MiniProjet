@@ -30,11 +30,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.os.Build;
 
 public class ViewListActivity extends ListActivity {
 	private RequestAdapter mAdapter;
+	private final static int VIEW_LIST = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +63,21 @@ public class ViewListActivity extends ListActivity {
 				Intent modelIntent = new Intent(getApplicationContext(), ModelListActivity.class);
 				modelIntent.putExtra(ModelListActivity.BRAND_EXTRA, selectedBrand);
 				startActivity(modelIntent);*/
+				RequestModel selectedRequest = (RequestModel)arg0.getItemAtPosition(arg2);
+				Intent i = new Intent(ViewListActivity.this, AcceptRequest.class);
+				i.putExtra("request_info", selectedRequest);
+    	    	startActivityForResult(i, VIEW_LIST);
 			}
 		});
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == VIEW_LIST && resultCode== RESULT_OK)
+		{
+			Toast.makeText( getApplicationContext(),"User Notified",Toast.LENGTH_SHORT).show();
+			this.finish();
+		}
 	}
 
 	@Override

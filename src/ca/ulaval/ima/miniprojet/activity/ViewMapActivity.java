@@ -41,10 +41,12 @@ import android.widget.Toast;
 
 public class ViewMapActivity extends FragmentActivity{
 	
+	private static final int VIEW_MAP = 1;
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
 	Location lastKnownLocation = new Location("dummy");
 	JSONArray jSONrequests;
+	private boolean reqNotify = false;
 
 	
 	private ArrayList<RequestModel> mRequestModelArray = new ArrayList<RequestModel>();
@@ -139,16 +141,24 @@ public class ViewMapActivity extends FragmentActivity{
 	  			    public void onInfoWindowClick(Marker marker){
             	    	Log.d("ViewMap - OnInfoWindowClick", "InfoWindow has been clicked");
 
-	  			        //Passer les infos du marqueur à la fenêtre suivante.
-            			Intent intent = new Intent(ViewMapActivity.this, AcceptRequest.class);
+            			Intent i= new Intent(ViewMapActivity.this, AcceptRequest.class);
             			RequestModel reqModel = mMarkerExtraInfo.get(marker.getId());
-            			intent.putExtra("MarkerInfo", reqModel);
+            			i.putExtra("request_info", reqModel);
             			Log.d("ViewMap - OnInfoWindowClick", "Starting the activity");
-            			startActivity(intent);
+            	    	startActivityForResult(i, VIEW_MAP);
 	  			    }
 	  			  });
 	        
 	}//fin de onCreate
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == VIEW_MAP && resultCode== RESULT_OK)
+		{
+			Toast.makeText( getApplicationContext(),"User Notified",Toast.LENGTH_SHORT).show();
+			this.finish();
+		}
+	}
 	        
 		private void loadMapMarkers(){
 		Log.d("ViewMap", "Setting up for HttpCustomRequest");

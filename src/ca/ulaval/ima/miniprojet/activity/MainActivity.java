@@ -18,6 +18,7 @@ public class MainActivity extends Activity {
 	static final int REQUEST_LOGIN = 1;
 	private boolean loggedIn = false;
 	static final String CURRENT_USER = "CURRENT_USER";
+	static final String REQUEST_SELECTED = "REQUEST_SELECTED";
 	private UserModel currentUser = null;
 
 	@Override
@@ -89,12 +90,8 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			super.onResume();
 		}
-		
-		
 	}
-	
-	
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==REQUEST_LOGIN && resultCode==RESULT_OK)
@@ -124,11 +121,9 @@ public class MainActivity extends Activity {
 		}
 		super.onResume();
 	}
-	
 
 	public void openLoginForm(View view){
 		Intent intent = new Intent(this, LoginActivity.class);
-		//startActivity(intent);
 		startActivityForResult(intent, REQUEST_LOGIN);
 	}
 	
@@ -139,12 +134,12 @@ public class MainActivity extends Activity {
 	}
 	
 	public void openMap(View view){
-		Intent intent = new Intent(this, ViewMapActivity.class);
+		Intent intent = new Intent(MainActivity.this, ViewMapActivity.class);
 		startActivity(intent);
 	}
 	
 	public void openList(View view){
-		Intent intent = new Intent(this, ViewListActivity.class);
+		Intent intent = new Intent(MainActivity.this, ViewListActivity.class);
 		startActivity(intent);
 	}
 

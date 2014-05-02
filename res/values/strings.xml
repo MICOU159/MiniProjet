@@ -22,5 +22,12 @@
     <string name="title_activity_accept_request">AcceptRequestActivity</string>
     
     
+        <!-- Strings related to accepting a request -->
+    <string name="lb_destination">Destination: </string>
+    <string name="lb_username">Username: </string>
+    <string name="lb_passengers">Number of travelers: </string>
+    <string name="lb_address">Address: </string>
+    <string name="btn_Notify">Notify the user</string>
+    <string name="btn_Back">Back</string>
 
 </resources>

@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvDestination"
         android:layout_alignParentTop="true"
-        android:text="Username:"
+        android:text="@string/lb_username"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/tvReqUsername"
-        android:text="Destination:"
+        android:text="@string/lb_destination"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvReqDestination"
         android:layout_below="@+id/tvReqDestination"
-        android:text="Number of passengers:"
+        android:text="@string/lb_passengers"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -65,15 +65,15 @@
     <EditText
         android:id="@+id/tvReqAddress"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:layout_alignLeft="@+id/tvAddress"
-        android:layout_alignRight="@+id/notify_btn"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/tvAddress"
-        android:clickable="false" 
-        android:cursorVisible="false" 
-        android:focusable="false" 
-        android:focusableInTouchMode="false"
+        android:layout_toRightOf="@+id/tvReqPassengers"
+        android:clickable="false"
+        android:cursorVisible="false"
         android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:textSize="@dimen/activity_text" />
 
     <TextView
@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvReqPassengers"
         android:layout_below="@+id/tvReqPassengers"
-        android:text="Full address:"
+        android:text="@string/lb_address"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
@@ -90,18 +90,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvReqAddress"
-        android:layout_marginTop="20dp"
-        android:layout_toRightOf="@+id/tvNbPassengers"
-        android:text="Notify the user" />
-
-    <Button
-        android:id="@+id/cancel_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/notify_btn"
-        android:layout_alignLeft="@+id/tvReqAddress"
-        android:layout_alignRight="@+id/tvDestination"
-        android:layout_alignTop="@+id/notify_btn"
-        android:text="Back" />
+        android:layout_toRightOf="@+id/tvAddress"
+        android:onClick="notifyButton"
+        android:text="@string/btn_Notify" />
 
 </RelativeLayout>

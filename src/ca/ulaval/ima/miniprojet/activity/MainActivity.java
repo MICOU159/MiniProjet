@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class MainActivity extends Activity {
 	
@@ -63,8 +64,33 @@ public class MainActivity extends Activity {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			
+			//To disable buttons
+			/*Button btn1 = (Button)rootView.findViewById(R.id.makeRequest_btn);
+			Button btn2 = (Button)rootView.findViewById(R.id.viewMap_btn);
+			Button btn3 = (Button)rootView.findViewById(R.id.viewList_btn);
+			
+			if (currentUser == null) {
+				btn1.setEnabled(false);
+				btn2.setEnabled(false);
+				btn3.setEnabled(false);
+			} else {
+				btn1.setEnabled(true);
+				btn2.setEnabled(true);
+				btn3.setEnabled(true);
+				
+			}*/
+			
 			return rootView;
 		}
+
+		@Override
+		public void onResume() {
+			// TODO Auto-generated method stub
+			super.onResume();
+		}
+		
+		
 	}
 	
 	
@@ -96,7 +122,13 @@ public class MainActivity extends Activity {
 	}
 	
 	public void openList(View view){
-		//...
+		Intent intent = new Intent(this, ViewListActivity.class);
+		startActivity(intent);
 	}
-
+	
+	/*public UserModel getCurrentUser(){
+		return this.currentUser;
+	}*/
+	
+	
 }

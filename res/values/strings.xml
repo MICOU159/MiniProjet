@@ -16,7 +16,9 @@
     <string name="personsCount">Number of travelers : </string>
     <string name="message">Leave a message : </string>
     <string name="summit">Summit</string>
-    
+    <string name="title_activity_view_list">ViewListActivity</string>
+    <string name="list_activity_nothing_to_display">No data available</string>
+    <string name="desc_status">status</string>
     
     
 

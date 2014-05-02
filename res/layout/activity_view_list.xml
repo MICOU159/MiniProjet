@@ -1,0 +1,28 @@
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.ulaval.ima.miniprojet.activity.ViewListActivity"
+    tools:ignore="MergeRootFrame" />
+    -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <ListView
+	    android:id="@+id/android:list"
+	    android:cacheColorHint="@null"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    />
+	<TextView
+	    android:id="@+id/android:empty"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:text="@string/list_activity_nothing_to_display"/>
+
+</LinearLayout>
+

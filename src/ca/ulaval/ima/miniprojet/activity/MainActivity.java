@@ -71,14 +71,17 @@ public class MainActivity extends Activity {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode==REQUEST_LOGIN && resultCode==RESULT_OK)
+		{
+			this.currentUser = data.getExtras().getParcelable(CURRENT_USER);
+			this.loggedIn = true;
+		}
 	}
 
 	public void openLoginForm(View view){
 		Intent intent = new Intent(this, LoginActivity.class);
-		startActivity(intent);
-		//startActivityForResult(intent, REQUEST_LOGIN);
+		//startActivity(intent);
+		startActivityForResult(intent, REQUEST_LOGIN);
 	}
 	
 	public void openRequestForm(View view){

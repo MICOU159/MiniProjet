@@ -1,16 +1,42 @@
 package ca.ulaval.ima.miniprojet.activity;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ca.ulaval.ima.miniprojet.R;
+import ca.ulaval.ima.miniprojet.activity.LoginActivity.UserLoginTask;
+import ca.ulaval.ima.miniprojet.model.PositionModel;
+import ca.ulaval.ima.miniprojet.model.RequestModel;
+import ca.ulaval.ima.miniprojet.model.UserModel;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class MakeRequestActivity extends Activity {
+	private UserModel currentUser = null;
+	private RequestModel request = null;
+	private SendRequestTask mRequestTask = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +47,8 @@ public class MakeRequestActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
+		this.currentUser = this.getIntent().getExtras().getParcelable(MainActivity.CURRENT_USER);
 	}
 
 	@Override
@@ -61,7 +89,189 @@ public class MakeRequestActivity extends Activity {
 	}
 	
 	public void summit(View view){
-		this.finish();
+		//recupérer val
+		EditText edit= (EditText) findViewById(R.id.inputDestination);
+		String destination = edit.getText().toString();
+		
+		edit= (EditText) findViewById(R.id.inputPersonsCount);
+		String personsCountText = edit.getText().toString();
+		
+		edit= (EditText) findViewById(R.id.inputMessage);
+		String message = edit.getText().toString();
+		
+		if(!destination.isEmpty() && !personsCountText.isEmpty()){
+			
+			if(this.currentUser == null){
+				this.finish();
+			}
+			
+			//create request
+			String username = this.currentUser.getmUsername();
+			//PositionModel position = this.getPosition();  *********************retourne NULL
+			PositionModel position = new PositionModel(46.779139, -71.27037);  //test
+			int personsCount = Integer.parseInt(personsCountText);
+			
+			request = new RequestModel(username, position, destination, personsCount, message);
+			
+			//send request...
+			mRequestTask = new SendRequestTask();
+			String url = "http://relaybit.com:2222/requests";
+			mRequestTask.execute(url);
+		}
+	}
+	
+	private PositionModel getPosition(){
+		
+		PositionModel pos = null;
+		
+		LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        
+        if(lastKnownLocation !=null){
+        	double latitude = lastKnownLocation.getLatitude(); 
+            double longitude = lastKnownLocation.getLongitude();
+            pos = new PositionModel(latitude, longitude);
+        }
+     
+		return pos;
+	}
+	
+	/**
+	 * Represents an asynchronous task
+	 */
+	public class SendRequestTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... urls) {
+			 try {
+	                return downloadUrl(urls[0]);
+	            } catch (IOException e) {
+	                Log.d("Exeption :", "Unable to retrieve web page. URL may be invalid.");
+	                return null;
+	            }
+		}
+		
+		@Override
+		protected void onPostExecute(String response) {
+			mRequestTask = null;
+			
+			if(response !=null){
+				
+				Log.d("MakeRequestActivity", "sendRequest succeed");
+			}
+			
+			finish(); //<-------test
+
+		}
+		
+		private String downloadUrl(String myurl) throws IOException {
+		    InputStream is = null;
+		        
+		    try {
+		        URL url = new URL(myurl);
+		        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		        conn.setReadTimeout(10000 /* milliseconds */);
+		        conn.setConnectTimeout(15000 /* milliseconds */);
+		        
+		        //pour un GET
+		        /*conn.setRequestMethod("GET");
+		        conn.setDoInput(true);*/
+		        
+		        //pour un POST
+		        conn.setDoOutput(true);
+		        conn.setRequestProperty("Content-Type", "application/json");
+		        conn.setRequestProperty("Accept", "application/json");
+		        conn.setRequestMethod("POST");
+		        conn.setChunkedStreamingMode(0);
+
+
+		     // Starts the query
+		        conn.connect();
+		        
+		        OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+		        writeStream(out);
+		        
+		        Log.d("debug", "Asking for responseCode");
+		        int response = conn.getResponseCode();
+		        Log.d("debug", "The responseCode is: " + response);
+		        is = conn.getInputStream();
+		        
+		        
+		        StringBuilder sb = new StringBuilder();
+				BufferedReader reader=null;
+				try {
+					reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				} catch (Exception e1) {
+					reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+					Log.d("asyncHttp", "bufferedreader :"+e1 + " " + reader.readLine());
+					e1.printStackTrace();
+				} 
+				
+				if(reader != null) {		
+
+					String line = null;
+					try {
+						while ((line = reader.readLine()) != null) {
+							sb.append(line + "\n");
+						}
+					} catch (Exception e) {
+						Log.d("asyncHttp", "line :"+e);
+						e.printStackTrace();
+					} finally {
+						try {
+							conn.getInputStream().close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					Log.d("asyncHttp","answer"+ sb.toString());
+				}
+				
+				return sb.toString();
+		        
+		    // Makes sure that the InputStream is closed after the app is
+		    // finished using it.
+		    } finally {
+		        if (is != null) {
+		            is.close();
+		        } 
+		    }
+		}
+		
+		private void writeStream(OutputStream out) throws IOException {
+			// TODO Auto-generated method stub
+			
+			
+			String body = request.toJSON().toString();
+			
+			Log.d("MakeRequestActivity", "Trying to send string" + body);
+			
+			byte[] encodedValue = null;
+			try {
+				encodedValue= body.getBytes("UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(encodedValue != null){
+				try {
+					Log.d("MakeRequestActivity", "encoded value isnt null!" + encodedValue.toString());
+					out.write(encodedValue);
+					out.flush();
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					Log.d("MakeRequestActivity", "encoded value is null!");
+					e.printStackTrace();
+				} finally{
+					/*if (out != null) {
+			            out.close();
+			        }*/ 
+				}
+			}
+			
+		}
+		
 	}
 
 }

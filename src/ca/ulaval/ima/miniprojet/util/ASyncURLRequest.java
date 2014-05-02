@@ -108,6 +108,7 @@ public class ASyncURLRequest extends AsyncTask<HttpCustomRequest, Void, String> 
 		connection.setDoInput(true);
 		
 		connection.setRequestMethod(request.getMethod());
+		
 		connection.setRequestProperty("User-Agent", ASyncURLRequest.getUserAgent(request.getContext()));
 		for(int i=0;i<request.getHeaders().size();i++){
 			NameValuePair currentKeyValue = request.getHeaders().get(i);

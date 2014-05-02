@@ -10,10 +10,16 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ca.ulaval.ima.miniprojet.model.UserModel;
+import ca.ulaval.ima.miniprojet.util.AsyncCustomURLRequest;
 import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
 import ca.ulaval.ima.miniprojet.R;
@@ -22,6 +28,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,6 +64,7 @@ public class LoginActivity extends Activity {
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
+	// private AsyncCustomURLRequest mAuthTask = null;
 
 	// Values for email and password at the time of the login attempt.
 	private String mEmail;
@@ -88,7 +96,7 @@ public class LoginActivity extends Activity {
 					public boolean onEditorAction(TextView textView, int id,
 							KeyEvent keyEvent) {
 						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
+							attemptRegister();
 							return true;
 						}
 						return false;
@@ -98,6 +106,14 @@ public class LoginActivity extends Activity {
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
+
+		findViewById(R.id.register_button).setOnClickListener(
+				new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						attemptRegister();
+					}
+				});
 
 		findViewById(R.id.sign_in_button).setOnClickListener(
 				new View.OnClickListener() {
@@ -145,11 +161,6 @@ public class LoginActivity extends Activity {
 		return true;
 	}
 
-	/**
-	 * Attempts to sign in or register the account specified by the login form.
-	 * If there are form errors (invalid email, missing fields, etc.), the
-	 * errors are presented and no actual login attempt is made.
-	 */
 	public void attemptLogin() {
 		if (mAuthTask != null) {
 			return;
@@ -197,20 +208,162 @@ public class LoginActivity extends Activity {
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
-			
-			//------------------------------
-			/*String urlToLoad = Util.getFormatedAPIURL(getApplicationContext(), "login");
-			HttpCustomRequest request = new HttpCustomRequest(this,urlToLoad);
-			request.setMethod("POST");
-			
-			String reqString = "{'username':" + "'" +mEmail+"'," + "'password':" + "'" +mPassword+ "'" + "}";
-			request.setBody(reqString);*/
-			
-			mAuthTask = new UserLoginTask();
+
+			// -----------------------------------
+			mAuthTask = new UserLoginTask() {
+				@Override
+				protected void onPostExecute(String response) {
+					mAuthTask = null;
+					showProgress(false);
+
+					if (response != null) {
+						Log.d("UserLoginTask", "login succeed");
+						
+						//return currentUser
+						UserModel user = new UserModel(mEmail, mPassword);
+						Intent intent = new Intent();
+						intent.putExtra(MainActivity.CURRENT_USER, user);
+						setResult(RESULT_OK, intent);
+						finish();
+						
+					} else {
+						mPasswordView
+								.setError(getString(R.string.error_incorrect_password));
+						mPasswordView.requestFocus();
+					}
+
+				}
+			};
+			String url = "http://relaybit.com:2222/login";
+			mAuthTask.execute(url);
+			// ------------------------------
+
+		}
+	}
+
+	/**
+	 * Attempts to sign in or register the account specified by the login form.
+	 * If there are form errors (invalid email, missing fields, etc.), the
+	 * errors are presented and no actual login attempt is made.
+	 */
+	public void attemptRegister() {
+		if (mAuthTask != null) {
+			return;
+		}
+
+		// Reset errors.
+		mEmailView.setError(null);
+		mPasswordView.setError(null);
+
+		// Store values at the time of the login attempt.
+		mEmail = mEmailView.getText().toString();
+		mPassword = mPasswordView.getText().toString();
+
+		boolean cancel = false;
+		View focusView = null;
+
+		// Check for a valid password.
+		if (TextUtils.isEmpty(mPassword)) {
+			mPasswordView.setError(getString(R.string.error_field_required));
+			focusView = mPasswordView;
+			cancel = true;
+		} else if (mPassword.length() < 4) {
+			mPasswordView.setError(getString(R.string.error_invalid_password));
+			focusView = mPasswordView;
+			cancel = true;
+		}
+
+		// Check for a valid email address.
+		if (TextUtils.isEmpty(mEmail)) {
+			mEmailView.setError(getString(R.string.error_field_required));
+			focusView = mEmailView;
+			cancel = true;
+		} else if (!mEmail.contains("@")) {
+			mEmailView.setError(getString(R.string.error_invalid_email));
+			focusView = mEmailView;
+			cancel = true;
+		}
+
+		if (cancel) {
+			// There was an error; don't attempt login and focus the first
+			// form field with an error.
+			focusView.requestFocus();
+		} else {
+			// Show a progress spinner, and kick off a background task to
+			// perform the user login attempt.
+			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
+			showProgress(true);
+
+			// ------------------------------
+			// En utilisant HttpCustomRequest <----fonctionne pas
+
+			/*
+			 * String urlToLoad =
+			 * Util.getFormatedAPIURL(getApplicationContext(), "users");
+			 * HttpCustomRequest request = new
+			 * HttpCustomRequest(this,urlToLoad);
+			 * 
+			 * //set http method request.setMethod("POST");
+			 * 
+			 * //set headers List<NameValuePair> headers = new
+			 * ArrayList<NameValuePair>(); headers.add(new
+			 * BasicNameValuePair("Content-Type", "application/json"));
+			 * request.setHeaders(headers);
+			 * 
+			 * //set body JSONObject json = new JSONObject(); try {
+			 * json.put("email", "test"); json.put("password", "test"); } catch
+			 * (JSONException e) { // TODO Auto-generated catch block
+			 * e.printStackTrace(); }
+			 * 
+			 * String reqString = json.toString(); request.setBody(reqString);
+			 * 
+			 * mAuthTask = new AsyncCustomURLRequest(){
+			 * 
+			 * @Override protected void onPostExecute(String response) {
+			 * mAuthTask = null; showProgress(false); finish(); //<-------test
+			 * 
+			 * int responseCode = this.getResponseCode(); if (responseCode ==
+			 * 200) { // success //.. Log.d("UserLoginTask","login succeed");
+			 * finish(); } else { mPasswordView
+			 * .setError(getString(R.string.error_incorrect_password));
+			 * mPasswordView.requestFocus(); }
+			 * 
+			 * }
+			 * 
+			 * @Override protected void onCancelled() { mAuthTask = null;
+			 * showProgress(false); } };
+			 * 
+			 * mAuthTask.execute(request);
+			 */
+
+			// -----------------------------------
+			mAuthTask = new UserLoginTask(){
+				@Override
+				protected void onPostExecute(String response) {
+					mAuthTask = null;
+					showProgress(false);
+
+					if (response != null) {
+						Log.d("UserLoginTask", "register succeed");
+						
+						//return currentUser
+						UserModel user = new UserModel(mEmail, mPassword);
+						Intent intent = new Intent();
+						intent.putExtra(MainActivity.CURRENT_USER, user);
+						setResult(RESULT_OK, intent);
+						finish();
+						
+					} else {
+						mPasswordView
+								.setError(getString(R.string.error_incorrect_password));
+						mPasswordView.requestFocus();
+					}
+				}
+			};
 			String url = "http://relaybit.com:2222/users";
 			mAuthTask.execute(url);
-			//------------------------------
-			
+			// ------------------------------
+
 		}
 	}
 
@@ -260,35 +413,17 @@ public class LoginActivity extends Activity {
 	 * the user.
 	 */
 	public class UserLoginTask extends AsyncTask<String, Void, String> {
-		
-		@Override
-        protected String doInBackground(String... urls) {
-              
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                return downloadUrl(urls[0]);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
 
 		@Override
-		protected void onPostExecute(String response) {
-			mAuthTask = null;
-			showProgress(false);
-			finish(); //<-------test
+		protected String doInBackground(String... urls) {
 
-			/*int responseCode = this.getResponseCode();
-			if (responseCode == 200) { // success
-				//..
-				Log.d("UserLoginTask","login succeed");
-				finish();
-			} else {
-				mPasswordView
-						.setError(getString(R.string.error_incorrect_password));
-				mPasswordView.requestFocus();
-			}*/
-
+			// params comes from the execute() call: params[0] is the url.
+			try {
+				return downloadUrl(urls[0]);
+			} catch (IOException e) {
+				Log.d("Exception: ", "Unable to retrieve web page. URL may be invalid.");
+				return null;
+			}
 		}
 
 		@Override
@@ -296,62 +431,68 @@ public class LoginActivity extends Activity {
 			mAuthTask = null;
 			showProgress(false);
 		}
-		
+
 		// Given a URL, establishes an HttpUrlConnection and retrieves
 		// the web page content as a InputStream, which it returns as
 		// a string.
 		private String downloadUrl(String myurl) throws IOException {
-		    InputStream is = null;
-		    // Only display the first 500 characters of the retrieved
-		    // web page content.
-		    int len = 500;
-		        
-		    try {
-		        URL url = new URL(myurl);
-		        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		        conn.setReadTimeout(10000 /* milliseconds */);
-		        conn.setConnectTimeout(15000 /* milliseconds */);
-		        
-		        //pour un GET
-		        /*conn.setRequestMethod("GET");
-		        conn.setDoInput(true);*/
-		        
-		        //pour un POST
-		        conn.setDoOutput(true);
-		        conn.setRequestProperty("Content-Type", "application/json");
-		        conn.setRequestProperty("Accept", "application/json");
-		        conn.setRequestMethod("POST");
-		        conn.setChunkedStreamingMode(0);
+			InputStream is = null;
+			// Only display the first 500 characters of the retrieved
+			// web page content.
+			// int len = 500;
 
+			try {
+				URL url = new URL(myurl);
+				HttpURLConnection conn = (HttpURLConnection) url
+						.openConnection();
+				conn.setReadTimeout(10000 /* milliseconds */);
+				conn.setConnectTimeout(15000 /* milliseconds */);
 
-		     // Starts the query
-		        conn.connect();
-		        
-		        OutputStream out = new BufferedOutputStream(conn.getOutputStream());
-		        writeStream(out);
-		        
-		        Log.d("debug", "Asking for responseCode");
-		        int response = conn.getResponseCode();
-		        Log.d("debug", "The responseCode is: " + response);
-		        is = conn.getInputStream();
+				// pour un GET
+				/*
+				 * conn.setRequestMethod("GET"); conn.setDoInput(true);
+				 */
 
+				// pour un POST
+				conn.setDoOutput(true);
+				conn.setRequestProperty("Content-Type", "application/json");
+				//conn.setRequestProperty("Accept", "application/json");
+				conn.setRequestMethod("POST");
+				conn.setChunkedStreamingMode(0);
 
-		        // Convert the InputStream into a string
-		        /*String contentAsString = readIt(is, len);
-		        Log.d("debug", "The responseStream is: " + contentAsString);
-		        return contentAsString;*/
-		        
-		        StringBuilder sb = new StringBuilder();
-				BufferedReader reader=null;
+				// Starts the query
+				conn.connect();
+
+				OutputStream out = new BufferedOutputStream(
+						conn.getOutputStream());
+				writeStream(out);
+
+				Log.d("debug", "Asking for responseCode");
+				int response = conn.getResponseCode();
+				Log.d("debug", "The responseCode is: " + response);
+				//is = conn.getInputStream();
+
+				// Convert the InputStream into a string
+				/*
+				 * String contentAsString = readIt(is, len); Log.d("debug",
+				 * "The responseStream is: " + contentAsString); return
+				 * contentAsString;
+				 */
+
+				StringBuilder sb = new StringBuilder();
+				BufferedReader reader = null;
 				try {
-					reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+					reader = new BufferedReader(new InputStreamReader(
+							conn.getInputStream()));
 				} catch (Exception e1) {
-					reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-					Log.d("asyncHttp", "bufferedreader :"+e1 + " " + reader.readLine());
+					reader = new BufferedReader(new InputStreamReader(
+							conn.getErrorStream()));
+					Log.d("asyncHttp",
+							"bufferedreader :" + e1 + " " + reader.readLine());
 					e1.printStackTrace();
-				} 
-				
-				if(reader != null) {		
+				}
+
+				if (reader != null) {
 
 					String line = null;
 					try {
@@ -359,7 +500,7 @@ public class LoginActivity extends Activity {
 							sb.append(line + "\n");
 						}
 					} catch (Exception e) {
-						Log.d("asyncHttp", "line :"+e);
+						Log.d("asyncHttp", "line :" + e);
 						e.printStackTrace();
 					} finally {
 						try {
@@ -368,49 +509,48 @@ public class LoginActivity extends Activity {
 							e.printStackTrace();
 						}
 					}
-					Log.d("asyncHttp","answer"+ sb.toString());
+					Log.d("asyncHttp", "answer" + sb.toString());
 				}
-				
+
 				return sb.toString();
-		        
-		    // Makes sure that the InputStream is closed after the app is
-		    // finished using it.
-		    } finally {
-		        if (is != null) {
-		            is.close();
-		        } 
-		    }
+
+				// Makes sure that the InputStream is closed after the app is
+				// finished using it.
+			} finally {
+				/*if (is != null) {
+					is.close();
+				}*/
+			}
 		}
-		
+
 		private void writeStream(OutputStream out) throws IOException {
 			// TODO Auto-generated method stub
-			/*JSONObject json = new JSONObject();
+
+			JSONObject json = new JSONObject();
 			try {
-				json.put("username", "nga@gmail.com");
-				json.put("password", "qwert");
-				
+				json.put("username", mEmail);
+				json.put("password", mPassword);
+
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			String body = json.toString();*/
-			
-			//String body = "{\"username\":\"" + "joe"+ "\",\"password\":\" " + "qwert" + "\"}";
-			String body =  "{\"username\": \"joe2@gmail.com\",\"password\": \"qwert\"}";
-			
+
+			String body = json.toString();
+
 			Log.d("LoginActivity", "Trying to send string" + body);
-			
+
 			byte[] encodedValue = null;
 			try {
-				encodedValue= body.getBytes("UTF-8");
+				encodedValue = body.getBytes("UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(encodedValue != null){
+			if (encodedValue != null) {
 				try {
-					Log.d("LoginActivity", "encoded value isnt null!" + encodedValue.toString());
+					Log.d("LoginActivity", "encoded value isnt null!"
+							+ encodedValue.toString());
 					out.write(encodedValue);
 					out.flush();
 					out.close();
@@ -418,22 +558,13 @@ public class LoginActivity extends Activity {
 					// TODO Auto-generated catch block
 					Log.d("LoginActivity", "encoded value is null!");
 					e.printStackTrace();
-				} finally{
-					/*if (out != null) {
-			            out.close();
-			        }*/ 
+				} finally {
+					/*
+					 * if (out != null) { out.close(); }
+					 */
 				}
 			}
-			
-		}
 
-		// Reads an InputStream and converts it to a String.
-		public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-		    Reader reader = null;
-		    reader = new InputStreamReader(stream, "UTF-8");        
-		    char[] buffer = new char[len];
-		    reader.read(buffer);
-		    return new String(buffer);
 		}
 	}
 }

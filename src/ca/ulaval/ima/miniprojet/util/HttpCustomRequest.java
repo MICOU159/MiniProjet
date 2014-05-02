@@ -28,6 +28,10 @@ public class HttpCustomRequest {
 		this.mBody = null;
 	}
 	
+	public void setHeaders(List<NameValuePair> inHeaders){
+		this.mHeaders = inHeaders;
+	}
+	
 	public void setBody(String inBody){
 		this.mBody = inBody;
 	}

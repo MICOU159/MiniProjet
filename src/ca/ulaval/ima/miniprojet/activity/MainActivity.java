@@ -32,6 +32,21 @@ public class MainActivity extends Activity {
 	}
 	
 	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putParcelable(CURRENT_USER, currentUser);
+		super.onSaveInstanceState(outState);
+	}
+	
+
+	@Override
+	//The system calls onRestoreInstanceState() only if there is a saved state to restore, 
+	//so no need to check whether the Bundle is null
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		currentUser = savedInstanceState.getParcelable(CURRENT_USER);
+	}
+	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.

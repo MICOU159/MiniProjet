@@ -6,7 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RequestModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class RequestModel implements Parcelable{
 
 	private int id;
 	private String mUsername;
@@ -47,13 +51,25 @@ public class RequestModel {
 						this.mMessages.add(jArray.get(i).toString());
 					}
 				}
-
 				this.mStatus = inObject.getInt("status");
 
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 
+		}
+	}
+	
+	
+	public RequestModel(Parcel in) {
+		if (in.dataSize() > 0) {
+			this.id = in.readInt();
+			this.mUsername = in.readString();
+			this.mDestination = in.readString();
+			this.mPosition = in.readParcelable(PositionModel.class.getClassLoader());
+			this.mPersonsCount = in.readInt();
+			this.mMessages = (ArrayList<String>) in.readSerializable();
+			this.mStatus = in.readInt();
 		}
 	}
 
@@ -128,6 +144,34 @@ public class RequestModel {
 
 	public void setmStatus(int status) {
 		this.mStatus = status;
+	}
+	
+	public static final Parcelable.Creator<RequestModel> CREATOR = new Parcelable.Creator<RequestModel>() {
+		public RequestModel createFromParcel(Parcel in) {
+			return new RequestModel(in);
+		}
+
+		public RequestModel[] newArray(int size) {
+			return new RequestModel[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int arg1) {
+		// TODO Auto-generated method stub
+		out.writeInt(this.id);
+		out.writeString(this.mUsername);
+		out.writeString(this.mDestination);
+		out.writeParcelable(this.mPosition, arg1);
+		out.writeInt(this.mPersonsCount);
+		out.writeSerializable(this.mMessages);
+		out.writeInt(this.mStatus);
 	}
 
 }

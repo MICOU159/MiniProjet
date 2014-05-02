@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.ulaval.ima.miniprojet.R;
+import ca.ulaval.ima.miniprojet.model.RequestModel;
 import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +18,10 @@ import android.widget.TextView;
 import android.app.Fragment;
 
 public class AcceptRequest extends Activity{
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("AcceptActivity", "Made it!");
 		setContentView(R.layout.fragment_accept_request);
 
 		if (savedInstanceState != null) {
@@ -27,12 +29,15 @@ public class AcceptRequest extends Activity{
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
         
-        String username = getIntent().getExtras().getString("username");
-        String destination = getIntent().getExtras().getString("destination");
-        String passengers = getIntent().getExtras().getString("persons_count");
+		RequestModel reqModel = getIntent().getExtras().getParcelable("MarkerInfo");
+		
+        String username = reqModel.getmUsername();
+        String destination = reqModel.getmDestination();
+        int passengers = reqModel.getmPersonsCount();
+        //messages?
         
-        String latitude = getIntent().getExtras().getString("latitude");
-        String longitude = getIntent().getExtras().getString("longitude");
+        Double latitude = reqModel.getmPosition().getmLatitude();
+        Double longitude = reqModel.getmPosition().getmLongitude();
         
 		TextView tvUsername = (TextView) findViewById(R.id.tvReqUsername);
 		TextView tvPassengers = (TextView) findViewById(R.id.tvReqPassengers);
@@ -40,13 +45,13 @@ public class AcceptRequest extends Activity{
         TextView tvAddress = (TextView) findViewById(R.id.tvReqAddress);
        
         tvUsername.setText(username);
-        tvPassengers.setText(passengers);
+        tvPassengers.setText(""+passengers);
         tvDestination.setText(destination);
         
         Geocoder geocoder = new Geocoder(this, Locale.CANADA);
         
         try{
-        	List<Address> addresses = geocoder.getFromLocation(Double.parseDouble(latitude),Double.parseDouble(longitude), 1);
+        	List<Address> addresses = geocoder.getFromLocation(latitude,longitude, 1);
         	
         	if(addresses != null) {
         		   Address returnedAddress = addresses.get(0);

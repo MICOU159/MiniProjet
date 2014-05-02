@@ -41,33 +41,15 @@ import android.widget.Toast;
 
 public class ViewMapActivity extends FragmentActivity{
 	
-    // JSON Node names
-	private static final String TAG_ID = "id";
-    //private static final String TAG_USERID = "userID";
-	private static final String TAG_USERNAME = "username";
-    private static final String TAG_DESTINATION = "destination"; 
-    private static final String TAG_POSITION = "position"; 
-    private static final String TAG_LATITUDE = "latitude";
-    private static final String TAG_LONGITUDE = "longitude";
-    private static final String TAG_PERSONS_COUNT = "persons_count";
-    private static final String TAG_MESSAGES = "messages"; 
-    private static final String TAG_STATUS = "status"; 
-    
-	
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
 	Location lastKnownLocation = new Location("dummy");
 	JSONArray jSONrequests;
 
-	//Tableau de HashMap. Chaque HashMap est l'information d'une request (username,destination,etc.)
-	private ArrayList<HashMap<String, String>> hashmapArray = new ArrayList<HashMap<String,String>>();
 	
-	//private ArrayAdapter<HashMap<String,String>> hashmapArray;
-	//Tableau de marker. Chaque marker créé est dans ce tableau.
-	private ArrayList<Marker> markerArray = new ArrayList<Marker>();
-	//HashMap de d'information sur chaque marker. La clé est l'id du marker et le HashMap contient l'information
-	//associé au marker identifié.
-	private HashMap<String, HashMap<String,String>> markerExtraInfo = new HashMap<String, HashMap<String,String>>();
+	private ArrayList<RequestModel> mRequestModelArray = new ArrayList<RequestModel>();
+	private ArrayList<Marker> mMarkerArray = new ArrayList<Marker>();;
+	private HashMap<String, RequestModel> mMarkerExtraInfo = new HashMap<String, RequestModel>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,13 +120,12 @@ public class ViewMapActivity extends FragmentActivity{
 	                TextView lbUsername = (TextView) v.findViewById(R.id.txtUsername);
 	                TextView lbDestination = (TextView) v.findViewById(R.id.txtDestination);
 	                TextView lbPassengers = (TextView) v.findViewById(R.id.txtPassengers);
-	                TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
+	                //TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
 	                
-	                // Setting the values
-	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERNAME));
-	                lbDestination.setText(markerExtraInfo.get(arg0.getId()).get(TAG_DESTINATION));
-	                lbPassengers.setText(markerExtraInfo.get(arg0.getId()).get(TAG_PERSONS_COUNT));
-	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES)); //problème d'affichage si message trop long
+	                lbUsername.setText(mMarkerExtraInfo.get(arg0.getId()).getmUsername());
+	                lbDestination.setText(mMarkerExtraInfo.get(arg0.getId()).getmDestination());
+	                lbPassengers.setText("" + mMarkerExtraInfo.get(arg0.getId()).getmPersonsCount());
+	                //lbMessage.setText(mMarkerExtraInfo.get(arg0.getId()).);
 
 	                // Returning the view containing InfoWindow contents
 	                return v;
@@ -153,25 +134,17 @@ public class ViewMapActivity extends FragmentActivity{
 	        });
 	        
 	        //Comportement d'un click sur une info window.
-	        //Devra passer l'info du marquer à une nouvelle activité
             mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() { 
             	    @Override
 	  			    public void onInfoWindowClick(Marker marker){
             	    	Log.d("ViewMap - OnInfoWindowClick", "InfoWindow has been clicked");
 
-            	    	
-            	    	
-	  			      //Intent nextScreen = new Intent(MapsActivity.this,EventActivity.class);
-	  			        //mettre les ExtraMarkerInfo dans les extras pour les passer à la fenêtre suivante.
+	  			        //Passer les infos du marqueur à la fenêtre suivante.
             			Intent intent = new Intent(ViewMapActivity.this, AcceptRequest.class);
-            			intent.putExtra(TAG_DESTINATION, markerExtraInfo.get(marker.getId()).get(TAG_DESTINATION));
-            			intent.putExtra(TAG_PERSONS_COUNT, markerExtraInfo.get(marker.getId()).get(TAG_PERSONS_COUNT));
-            			intent.putExtra(TAG_LONGITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LONGITUDE));
-            			intent.putExtra(TAG_LATITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LATITUDE));
-            			//intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
-            			intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
+            			RequestModel reqModel = mMarkerExtraInfo.get(marker.getId());
+            			intent.putExtra("MarkerInfo", reqModel);
+            			Log.d("ViewMap - OnInfoWindowClick", "Starting the activity");
             			startActivity(intent);
-	  			        //startActivityForResult(nextScreen, 0);
 	  			    }
 	  			  });
 	        
@@ -189,55 +162,34 @@ public class ViewMapActivity extends FragmentActivity{
 				}
 				
 				try {
-					//JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
 					JSONObject inData = new JSONObject(s);
-					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
+					Log.d("ViewMap - RequestsJSON", "OBJECT" + inData);
 					
-					JSONArray requests = inData.getJSONArray("requests");
-					Log.d("ViewMap - RequestsJSON", "LE JSONOBJECT CONVERTI EN JSONARRAY" + requests.toString());
-					for (int i=0;i<requests.length();i++){
-						
-						JSONObject obj = requests.getJSONObject(i);
-						String id = obj.getString(TAG_ID);
-						String username = obj.getString(TAG_USERNAME);
-						String destination = obj.getString(TAG_DESTINATION);
-						String latitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LATITUDE);
-						String longitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LONGITUDE);
-						String persons_count = obj.getString(TAG_PERSONS_COUNT);
-						String messages = obj.getString(TAG_MESSAGES);
-						String status = obj.getString(TAG_STATUS);
+					JSONArray lJsonArrayPromo = inData.getJSONArray("requests");
+					Log.d("ViewMap - RequestsJSON", "LE JSONOBJECT CONVERTI EN JSONARRAY" + lJsonArrayPromo.toString());
+					for (int i=0;i< lJsonArrayPromo.length();i++){
 
-						Log.d("ViewMap - LoadMarkerExtraInfo", "JSONObj "+obj);
-						
-			            // temp hashmap
-			            HashMap<String, String> tempHMap = new HashMap<String, String>();
-			            
-			            tempHMap.put(TAG_ID, id);
-			            tempHMap.put(TAG_USERNAME, username);
-			            tempHMap.put(TAG_DESTINATION, destination);
-			            tempHMap.put(TAG_LATITUDE, latitude);
-			            tempHMap.put(TAG_LONGITUDE, longitude);
-			            tempHMap.put(TAG_PERSONS_COUNT, persons_count);
-			            tempHMap.put(TAG_MESSAGES, messages);
-			            tempHMap.put(TAG_STATUS, status);
-						
-			            //Array qui contient tous les objets JSON sous forme de HashMap
-						hashmapArray.add(tempHMap);
+						JSONObject obj = lJsonArrayPromo.getJSONObject(i);
+					    Log.d("ViewList", "OBJECT "+obj);
+						RequestModel reqModel = new RequestModel(obj);
 
+					    Log.d("ViewList", "OBJECT Adding to Array");
+						mRequestModelArray.add(reqModel);
+					    Log.d("ViewList", "OBJECT Added to Array");
+						
 					}
-					
-					//Populating the map once the array is loaded.
-					Iterator<HashMap<String,String>> it = hashmapArray.iterator();
+					Log.d("ViewMap", "Made it to iterator");
+					Iterator<RequestModel> it = mRequestModelArray.iterator();
 					while (it.hasNext()) {
-						HashMap<String,String> obj = it.next();
+						RequestModel obj = it.next();
+						Log.d("ViewMap", "The value of latitude:" + obj.getmPosition().getmLatitude());
+						Log.d("ViewMap", "The value of longitude:" + obj.getmPosition().getmLongitude());
 						Marker m = mMap.addMarker(new MarkerOptions()
-								   .title(obj.get(TAG_USERNAME))
-								   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
-										   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
-							   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 
-							   //est associée à la clé du marker  			   				
-							   markerExtraInfo.put(m.getId(), obj);
-							   markerArray.add(m);					
+						.title(obj.getmUsername())
+						.position(new LatLng(obj.getmPosition().getmLatitude(), obj.getmPosition().getmLongitude())));
+						
+						mMarkerExtraInfo.put(m.getId(), obj);
+						mMarkerArray.add(m);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

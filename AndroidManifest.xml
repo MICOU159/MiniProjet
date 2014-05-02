@@ -55,6 +55,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.ulaval.ima.miniprojet.activity.MainActivity" />
         </activity>
+        
         <activity
             android:name="ca.ulaval.ima.miniprojet.activity.ViewMapActivity"
             android:label="@string/title_activity_view_map"
@@ -67,6 +68,15 @@
         <activity
             android:name="ca.ulaval.ima.miniprojet.activity.ViewListActivity"
             android:label="@string/title_activity_view_list"
+            android:parentActivityName="ca.ulaval.ima.miniprojet.activity.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.ulaval.ima.miniprojet.activity.MainActivity" />
+        </activity>
+        
+        <activity
+            android:name="ca.ulaval.ima.miniprojet.activity.AcceptRequest"
+            android:label="@string/title_activity_accept_request"
             android:parentActivityName="ca.ulaval.ima.miniprojet.activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

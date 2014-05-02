@@ -14,22 +14,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.app.Fragment;
+import android.content.Intent;
 
 public class AcceptRequest extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d("AcceptActivity", "Made it!");
 		setContentView(R.layout.fragment_accept_request);
 
 		if (savedInstanceState != null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
-        
-		RequestModel reqModel = getIntent().getExtras().getParcelable("MarkerInfo");
+		
+		RequestModel reqModel = getIntent().getExtras().getParcelable("request_info");
 		
         String username = reqModel.getmUsername();
         String destination = reqModel.getmDestination();
@@ -69,6 +70,13 @@ public class AcceptRequest extends Activity{
         	e.printStackTrace();
         	tvAddress.setText("Cannot get an address from the GPS localisation!");
         }
+        
+	}
+	
+	public void notifyButton(View v) {
+    	Log.d("AcceptRequest", "Notifying of success");
+    	setResult(RESULT_OK);
+    	finish();
 	}
 	
 	public static class PlaceholderFragment extends Fragment {

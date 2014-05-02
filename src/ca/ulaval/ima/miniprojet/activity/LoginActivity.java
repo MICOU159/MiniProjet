@@ -19,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.ulaval.ima.miniprojet.model.UserModel;
-import ca.ulaval.ima.miniprojet.util.AsyncCustomURLRequest;
+//import ca.ulaval.ima.miniprojet.util.AsyncCustomURLRequest; est absent pour moi
 import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
 import ca.ulaval.ima.miniprojet.R;

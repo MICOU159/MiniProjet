@@ -20,12 +20,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 
+import ca.ulaval.ima.miniprojet.model.PositionModel;
+import ca.ulaval.ima.miniprojet.model.RequestModel;
 import ca.ulaval.ima.miniprojet.util.ASyncURLRequest;
 import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
 import ca.ulaval.ima.miniprojet.util.Util;
 import ca.ulaval.ima.miniprojet.R;
 import ca.ulaval.ima.miniprojet.activity.MainActivity.PlaceholderFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -40,19 +43,21 @@ public class ViewMapActivity extends FragmentActivity{
 	
     // JSON Node names
 	private static final String TAG_ID = "id";
-    private static final String TAG_USERID = "userID";
-	//private static final String TAG_USERNAME = "username";
+    //private static final String TAG_USERID = "userID";
+	private static final String TAG_USERNAME = "username";
     private static final String TAG_DESTINATION = "destination"; 
     private static final String TAG_POSITION = "position"; 
-    private static final String TAG_LATITUDE = "lalitude"; //  <----------LOL lalitude
+    private static final String TAG_LATITUDE = "latitude";
     private static final String TAG_LONGITUDE = "longitude";
     private static final String TAG_PERSONS_COUNT = "persons_count";
     private static final String TAG_MESSAGES = "messages"; 
     private static final String TAG_STATUS = "status"; 
+    
 	
 	private static String url = "http://relaybit.com:2222/";
 	private GoogleMap mMap;
-
+	Location lastKnownLocation = new Location("dummy");
+	JSONArray jSONrequests;
 
 	//Tableau de HashMap. Chaque HashMap est l'information d'une request (username,destination,etc.)
 	private ArrayList<HashMap<String, String>> hashmapArray = new ArrayList<HashMap<String,String>>();
@@ -63,8 +68,6 @@ public class ViewMapActivity extends FragmentActivity{
 	//HashMap de d'information sur chaque marker. La clé est l'id du marker et le HashMap contient l'information
 	//associé au marker identifié.
 	private HashMap<String, HashMap<String,String>> markerExtraInfo = new HashMap<String, HashMap<String,String>>();
-	JSONArray jSONrequests;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,38 +78,44 @@ public class ViewMapActivity extends FragmentActivity{
 			getFragmentManager().beginTransaction()
 					.add(R.id.map, new PlaceholderFragment()).commit();
 		}
-
-
-		//hashmapArray = new ArrayAdapter<HashMap<String, String>>(this,R.id.map);
-
-        LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        LocationListener mlocListener = new MyLocationListener();
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
 	
 		//Vérifie si goodleplay est available
-		Log.d("ViewMap", "Is google play available?");
 		isGooglePlayAvailable();
-		Log.d("ViewMap", "Google play is available");
 		
 		//initialise la map si elle n'existe pas déjà
-		Log.d("ViewMap", "Setting up the map");
 		SetUpMapifNeeded();
-		Log.d("ViewMap", "The map is set up");
 
 		//initialise les marqueurs sur la carte
 		loadMapMarkers();
 		
         //Obtient les coordonnées les plus récentes.
 		Log.d("ViewMap", "Getting last known location");
-		Location lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        //information pour centré et zoomer sur la position de l'utilisateur
-		Log.d("ViewMap", "Centering camera");
-		CameraUpdate center=
-	            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
-	            		lastKnownLocation.getLongitude()));
-	        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
-	        mMap.moveCamera(center);
-	        mMap.animateCamera(zoom);
+		try {
+	        LocationManager mlocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+	        LocationListener mlocListener = new MyLocationListener();
+	        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+			
+			lastKnownLocation = mlocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			
+			Log.d("ViewMap", "Centering camera");
+	        //information pour centré et zoomer sur la position de l'utilisateur
+			CameraUpdate center=
+		            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
+		            		lastKnownLocation.getLongitude()));
+		        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
+		        mMap.moveCamera(center);
+		        mMap.animateCamera(zoom);
+		} catch  (NullPointerException e) {
+			Log.d("ViewMap", "Last known GPS location is null - Setting up fake location");
+			lastKnownLocation.setAltitude(71);
+			lastKnownLocation.setLongitude(-41);
+			CameraUpdate center=
+		            CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(),
+		            		lastKnownLocation.getLongitude()));
+		        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
+		        mMap.moveCamera(center);
+		        mMap.animateCamera(zoom);
+		}
 
 	        //Setting a custom info window adapter for the google map
 	        mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
@@ -132,10 +141,10 @@ public class ViewMapActivity extends FragmentActivity{
 	                TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
 	                
 	                // Setting the values
-	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERID));
+	                lbUsername.setText(markerExtraInfo.get(arg0.getId()).get(TAG_USERNAME));
 	                lbDestination.setText(markerExtraInfo.get(arg0.getId()).get(TAG_DESTINATION));
 	                lbPassengers.setText(markerExtraInfo.get(arg0.getId()).get(TAG_PERSONS_COUNT));
-	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES));; //problème d'affichage si message trop long
+	                lbMessage.setText(markerExtraInfo.get(arg0.getId()).get(TAG_MESSAGES)); //problème d'affichage si message trop long
 
 	                // Returning the view containing InfoWindow contents
 	                return v;
@@ -149,11 +158,19 @@ public class ViewMapActivity extends FragmentActivity{
             	    @Override
 	  			    public void onInfoWindowClick(Marker marker){
             	    	Log.d("ViewMap - OnInfoWindowClick", "InfoWindow has been clicked");
+
+            	    	
+            	    	
 	  			      //Intent nextScreen = new Intent(MapsActivity.this,EventActivity.class);
 	  			        //mettre les ExtraMarkerInfo dans les extras pour les passer à la fenêtre suivante.
-	  			      	//nextScreen.putExtra("userId", "" + userId);
-	  			        //nextScreen.putExtra("eventId", "" + eventId);
-
+            			Intent intent = new Intent(ViewMapActivity.this, AcceptRequest.class);
+            			intent.putExtra(TAG_DESTINATION, markerExtraInfo.get(marker.getId()).get(TAG_DESTINATION));
+            			intent.putExtra(TAG_PERSONS_COUNT, markerExtraInfo.get(marker.getId()).get(TAG_PERSONS_COUNT));
+            			intent.putExtra(TAG_LONGITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LONGITUDE));
+            			intent.putExtra(TAG_LATITUDE, markerExtraInfo.get(marker.getId()).get(TAG_LATITUDE));
+            			//intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
+            			intent.putExtra(TAG_USERNAME, markerExtraInfo.get(marker.getId()).get(TAG_USERNAME));
+            			startActivity(intent);
 	  			        //startActivityForResult(nextScreen, 0);
 	  			    }
 	  			  });
@@ -172,7 +189,8 @@ public class ViewMapActivity extends FragmentActivity{
 				}
 				
 				try {
-					JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
+					//JSONObject inData = new JSONObject("{\"requests\":" + s +"}");
+					JSONObject inData = new JSONObject(s);
 					Log.d("ViewMap - RequestsJSON", "Data of the list" + inData);
 					
 					JSONArray requests = inData.getJSONArray("requests");
@@ -181,7 +199,7 @@ public class ViewMapActivity extends FragmentActivity{
 						
 						JSONObject obj = requests.getJSONObject(i);
 						String id = obj.getString(TAG_ID);
-						String userId = obj.getString(TAG_USERID);
+						String username = obj.getString(TAG_USERNAME);
 						String destination = obj.getString(TAG_DESTINATION);
 						String latitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LATITUDE);
 						String longitude = obj.getJSONObject(TAG_POSITION).getString(TAG_LONGITUDE);
@@ -195,7 +213,7 @@ public class ViewMapActivity extends FragmentActivity{
 			            HashMap<String, String> tempHMap = new HashMap<String, String>();
 			            
 			            tempHMap.put(TAG_ID, id);
-			            tempHMap.put(TAG_USERID, userId);
+			            tempHMap.put(TAG_USERNAME, username);
 			            tempHMap.put(TAG_DESTINATION, destination);
 			            tempHMap.put(TAG_LATITUDE, latitude);
 			            tempHMap.put(TAG_LONGITUDE, longitude);
@@ -213,7 +231,7 @@ public class ViewMapActivity extends FragmentActivity{
 					while (it.hasNext()) {
 						HashMap<String,String> obj = it.next();
 						Marker m = mMap.addMarker(new MarkerOptions()
-								   .title(obj.get(TAG_USERID))
+								   .title(obj.get(TAG_USERNAME))
 								   .position(new LatLng(Double.parseDouble(obj.get(TAG_LATITUDE)),
 										   				Double.parseDouble(obj.get(TAG_LONGITUDE)))));
 							   //L'info de UN marker (contenu dans un HashMap<String,String>, représentée ici par obj) 

@@ -14,7 +14,8 @@
         android:text="@string/login" 
     	android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="openLoginForm" />
+        android:onClick="openLoginForm"
+        android:enabled="true" />
     
     <Button 
         android:id="@+id/makeRequest_btn"
@@ -22,7 +23,8 @@
     	android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_btn"
-        android:onClick="openRequestForm" />
+        android:onClick="openRequestForm"
+        android:enabled="true" />
         
     <Button 
         android:id="@+id/viewMap_btn"
@@ -30,7 +32,8 @@
     	android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/makeRequest_btn"
-        android:onClick="openMap" />
+        android:onClick="openMap"
+        android:enabled="true" />
     
     <Button 
         android:id="@+id/viewList_btn"
@@ -38,6 +41,7 @@
     	android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/viewMap_btn"
-        android:onClick="openList" />
+        android:onClick="openList"
+        android:enabled="true" />
 
 </RelativeLayout>

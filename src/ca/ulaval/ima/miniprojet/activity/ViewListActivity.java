@@ -111,7 +111,7 @@ public class ViewListActivity extends ListActivity {
 					JSONObject inData = new JSONObject(s);
 					Log.d("ViewList", "data " + inData);
 					
-					JSONArray lJsonArrayPromo = inData.getJSONArray("requests");//<-------
+					JSONArray lJsonArrayPromo = inData.getJSONArray("requests");
 					for (int i=0;i<lJsonArrayPromo.length();i++){
 						JSONObject obj = lJsonArrayPromo.getJSONObject(i);
 						Log.d("ViewList", "OBJECT "+obj);
@@ -143,7 +143,10 @@ public class ViewListActivity extends ListActivity {
 		
 		public void addRequest(JSONObject inJson){
 			RequestModel outItem = new RequestModel(inJson);
-			mRequestsList.add(outItem);
+			//Add only the users that don't have a travel agreement (status !=1)
+			if (outItem.getmStatus() == 0) {
+				mRequestsList.add(outItem);	
+			}
 		}
 
 		@Override

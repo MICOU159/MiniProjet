@@ -34,15 +34,6 @@
             android:text="" />
 
         <TextView
-            android:id="@+id/txtMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/lbMessage"
-            android:layout_alignBottom="@+id/lbMessage"
-            android:layout_alignLeft="@+id/txtPassengers"
-            android:text="" />
-
-        <TextView
             android:id="@+id/lbDestination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,18 +60,9 @@
             android:id="@+id/lbClickHere"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtMessage"
-            android:layout_marginTop="20dp"
-            android:layout_toRightOf="@+id/lbPassengers"
-            android:text="Click here to offer a ride!" />
-
-        <TextView
-            android:id="@+id/lbMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/lbPassengers"
-            android:text="Message: " />
+            android:layout_toRightOf="@+id/lbDestination"
+            android:text="Click here to offer a ride!" />
 
     </RelativeLayout>
 

@@ -122,12 +122,10 @@ public class ViewMapActivity extends FragmentActivity{
 	                TextView lbUsername = (TextView) v.findViewById(R.id.txtUsername);
 	                TextView lbDestination = (TextView) v.findViewById(R.id.txtDestination);
 	                TextView lbPassengers = (TextView) v.findViewById(R.id.txtPassengers);
-	                //TextView lbMessage = (TextView) v.findViewById(R.id.txtMessage);
 	                
 	                lbUsername.setText(mMarkerExtraInfo.get(arg0.getId()).getmUsername());
 	                lbDestination.setText(mMarkerExtraInfo.get(arg0.getId()).getmDestination());
 	                lbPassengers.setText("" + mMarkerExtraInfo.get(arg0.getId()).getmPersonsCount());
-	                //lbMessage.setText(mMarkerExtraInfo.get(arg0.getId()).);
 
 	                // Returning the view containing InfoWindow contents
 	                return v;
@@ -192,14 +190,18 @@ public class ViewMapActivity extends FragmentActivity{
 					Iterator<RequestModel> it = mRequestModelArray.iterator();
 					while (it.hasNext()) {
 						RequestModel obj = it.next();
-						Log.d("ViewMap", "The value of latitude:" + obj.getmPosition().getmLatitude());
-						Log.d("ViewMap", "The value of longitude:" + obj.getmPosition().getmLongitude());
-						Marker m = mMap.addMarker(new MarkerOptions()
-						.title(obj.getmUsername())
-						.position(new LatLng(obj.getmPosition().getmLatitude(), obj.getmPosition().getmLongitude())));
 						
-						mMarkerExtraInfo.put(m.getId(), obj);
-						mMarkerArray.add(m);
+						//Requests that have been answered are hidden (status = 1).
+						if (obj.getmStatus() == 0) {
+							Log.d("ViewMap", "The value of latitude:" + obj.getmPosition().getmLatitude());
+							Log.d("ViewMap", "The value of longitude:" + obj.getmPosition().getmLongitude());
+							Marker m = mMap.addMarker(new MarkerOptions()
+							.title(obj.getmUsername())
+							.position(new LatLng(obj.getmPosition().getmLatitude(), obj.getmPosition().getmLongitude())));
+							
+							mMarkerExtraInfo.put(m.getId(), obj);
+							mMarkerArray.add(m);
+						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

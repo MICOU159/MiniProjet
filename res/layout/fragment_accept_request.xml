@@ -132,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/inputReply"
-                android:onClick="notifyButton"
+                android:onClick="replyButton"
                 android:text="@string/btn_send_reply" />
 
             <Button

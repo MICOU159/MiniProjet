@@ -27,10 +27,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.app.Fragment;
-import android.content.Intent;
 
 public class AcceptRequest extends Activity{
 	private final static String preUrl = "http://relaybit.com:2222/requests/";
@@ -56,8 +54,6 @@ public class AcceptRequest extends Activity{
     	String messages = "";
     	
 
-
-        
         Double latitude = reqModel.getmPosition().getmLatitude();
         Double longitude = reqModel.getmPosition().getmLongitude();
         
@@ -71,6 +67,8 @@ public class AcceptRequest extends Activity{
         tvPassengers.setText(""+passengers);
         tvDestination.setText(destination);
         
+        
+        //Montre uniquement le dernier message.. probabelement parce que pas d'atau scalling sur le textbox
         Iterator<String> it = reqModel.getmMessages().iterator();
 		while (it.hasNext()) {
 			String obj = it.next();
@@ -106,11 +104,11 @@ public class AcceptRequest extends Activity{
 	public void replyButton(View v) {
 		TextView tvReply = (TextView) findViewById(R.id.inputReply);
 		postMessage(tvReply.getText().toString());
+		tvReply.setText("");
 	}
 	
 	public void notifyButton(View v) {
 
-		postMessage("bannnnane");
 		postNotification();
     	Log.d("AcceptRequest", "Notifying of success");
     	setResult(RESULT_OK);

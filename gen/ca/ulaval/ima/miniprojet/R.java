@@ -1288,11 +1288,11 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f050026;
         public static final int action_bar_title=0x7f050025;
         public static final int action_context_bar=0x7f050020;
-        public static final int action_forgot_password=0x7f05006a;
+        public static final int action_forgot_password=0x7f05006f;
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050027;
-        public static final int action_settings=0x7f05006b;
+        public static final int action_settings=0x7f050070;
         public static final int activity_chooser_view_content=0x7f050028;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
@@ -1300,7 +1300,7 @@ containing a value of this type.
         public static final int collapseActionView=0x7f05000d;
         public static final int container=0x7f050047;
         public static final int default_activity_button=0x7f05002b;
-        public static final int destination=0x7f050068;
+        public static final int destination=0x7f05006d;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int dropdown=0x7f05000f;
@@ -1315,12 +1315,13 @@ containing a value of this type.
         public static final int icon=0x7f05002d;
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f05002a;
-        public static final int inputDestination=0x7f050061;
-        public static final int inputMessage=0x7f050065;
-        public static final int inputPersonsCount=0x7f050063;
-        public static final int label_destination=0x7f050060;
-        public static final int label_message=0x7f050064;
-        public static final int label_personsCount=0x7f050062;
+        public static final int inputDestination=0x7f050066;
+        public static final int inputMessage=0x7f05006a;
+        public static final int inputPersonsCount=0x7f050068;
+        public static final int inputReply=0x7f05005d;
+        public static final int label_destination=0x7f050065;
+        public static final int label_message=0x7f050069;
+        public static final int label_personsCount=0x7f050067;
         public static final int lbClickHere=0x7f050051;
         public static final int lbDestination=0x7f050050;
         public static final int lbMessage=0x7f05004f;
@@ -1329,18 +1330,18 @@ containing a value of this type.
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f05002c;
         public static final int login=0x7f050044;
-        public static final int login_btn=0x7f05005c;
+        public static final int login_btn=0x7f050061;
         public static final int login_form=0x7f050041;
         public static final int login_status=0x7f05003f;
         public static final int login_status_message=0x7f050040;
-        public static final int main_fragment=0x7f05005b;
-        public static final int makeRequest_btn=0x7f05005d;
+        public static final int main_fragment=0x7f050060;
+        public static final int makeRequest_btn=0x7f050062;
         public static final int map=0x7f050048;
         public static final int middle=0x7f050012;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
         public static final int normal=0x7f050000;
-        public static final int notify_btn=0x7f05005a;
+        public static final int notify_btn=0x7f05005f;
         public static final int password=0x7f050043;
         public static final int progress_circular=0x7f050018;
         public static final int progress_horizontal=0x7f050019;
@@ -1357,36 +1358,40 @@ containing a value of this type.
         public static final int search_plate=0x7f050039;
         public static final int search_src_text=0x7f05003a;
         public static final int search_voice_btn=0x7f05003e;
+        public static final int send_replay_btn=0x7f05005e;
         public static final int shortcut=0x7f050031;
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
         public static final int showTitle=0x7f050006;
         public static final int sign_in_button=0x7f050046;
         public static final int split_action_bar=0x7f050021;
-        public static final int status_icon=0x7f050069;
+        public static final int status_icon=0x7f05006e;
         public static final int submit_area=0x7f05003c;
-        public static final int summit_btn=0x7f050066;
+        public static final int summit_btn=0x7f05006b;
         public static final int tabMode=0x7f050002;
         public static final int terrain=0x7f05001b;
         public static final int title=0x7f05002e;
         public static final int top_action_bar=0x7f050023;
-        public static final int tvAddress=0x7f050059;
-        public static final int tvDestination=0x7f050053;
+        public static final int tvAddress=0x7f050058;
+        public static final int tvDestination=0x7f050054;
+        public static final int tvMessages=0x7f05005a;
         public static final int tvNbPassengers=0x7f050056;
-        public static final int tvReqAddress=0x7f050058;
-        public static final int tvReqDestination=0x7f050052;
+        public static final int tvReply=0x7f05005c;
+        public static final int tvReqAddress=0x7f050059;
+        public static final int tvReqDestination=0x7f050055;
+        public static final int tvReqMessages=0x7f05005b;
         public static final int tvReqPassengers=0x7f050057;
-        public static final int tvReqUsername=0x7f050054;
-        public static final int tvUsername=0x7f050055;
+        public static final int tvReqUsername=0x7f050053;
+        public static final int tvUsername=0x7f050052;
         public static final int txtDestination=0x7f05004d;
         public static final int txtMessage=0x7f05004e;
         public static final int txtPassengers=0x7f05004a;
         public static final int txtUsername=0x7f05004c;
         public static final int up=0x7f050024;
         public static final int useLogo=0x7f050003;
-        public static final int username=0x7f050067;
-        public static final int viewList_btn=0x7f05005f;
-        public static final int viewMap_btn=0x7f05005e;
+        public static final int username=0x7f05006c;
+        public static final int viewList_btn=0x7f050064;
+        public static final int viewMap_btn=0x7f050063;
         public static final int withText=0x7f05000c;
     }
     public static final class integer {
@@ -1501,11 +1506,11 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
-        public static final int action_forgot_password=0x7f0a0047;
-        public static final int action_register=0x7f0a0045;
+        public static final int action_forgot_password=0x7f0a004a;
+        public static final int action_register=0x7f0a0048;
         public static final int action_settings=0x7f0a002a;
-        public static final int action_sign_in_register=0x7f0a0044;
-        public static final int action_sign_in_short=0x7f0a0046;
+        public static final int action_sign_in_register=0x7f0a0047;
+        public static final int action_sign_in_short=0x7f0a0049;
         public static final int app_name=0x7f0a0028;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -1530,8 +1535,9 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f0a0021;
-        public static final int btn_Back=0x7f0a0040;
-        public static final int btn_Notify=0x7f0a003f;
+        public static final int btn_Back=0x7f0a0041;
+        public static final int btn_Notify=0x7f0a0040;
+        public static final int btn_send_reply=0x7f0a0043;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -1605,33 +1611,35 @@ containing a value of this type.
         public static final int common_signin_button_text_long=0x7f0a0020;
         public static final int desc_status=0x7f0a0039;
         public static final int destination=0x7f0a0033;
-        public static final int error_field_required=0x7f0a004c;
-        public static final int error_incorrect_password=0x7f0a004b;
-        public static final int error_invalid_email=0x7f0a0049;
-        public static final int error_invalid_password=0x7f0a004a;
+        public static final int error_field_required=0x7f0a004f;
+        public static final int error_incorrect_password=0x7f0a004e;
+        public static final int error_invalid_email=0x7f0a004c;
+        public static final int error_invalid_password=0x7f0a004d;
         public static final int hello_world=0x7f0a0029;
         public static final int lb_address=0x7f0a003e;
         /**  Strings related to accepting a request 
          */
         public static final int lb_destination=0x7f0a003b;
+        public static final int lb_messages=0x7f0a003f;
         public static final int lb_passengers=0x7f0a003d;
+        public static final int lb_reply=0x7f0a0042;
         public static final int lb_username=0x7f0a003c;
         public static final int list_activity_nothing_to_display=0x7f0a0038;
         /**  Location client code resources (prefix with location_client) 
          */
         public static final int location_client_powered_by_google=0x7f0a0027;
         public static final int login=0x7f0a002b;
-        public static final int login_progress_signing_in=0x7f0a0048;
+        public static final int login_progress_signing_in=0x7f0a004b;
         public static final int make_request=0x7f0a002c;
         public static final int message=0x7f0a0035;
         public static final int personsCount=0x7f0a0034;
         /**  Strings related to login 
          */
-        public static final int prompt_email=0x7f0a0042;
-        public static final int prompt_password=0x7f0a0043;
+        public static final int prompt_email=0x7f0a0045;
+        public static final int prompt_password=0x7f0a0046;
         public static final int summit=0x7f0a0036;
         public static final int title_activity_accept_request=0x7f0a003a;
-        public static final int title_activity_login=0x7f0a0041;
+        public static final int title_activity_login=0x7f0a0044;
         public static final int title_activity_make_request=0x7f0a0031;
         public static final int title_activity_view_list=0x7f0a0037;
         public static final int title_activity_view_map=0x7f0a0032;

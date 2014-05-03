@@ -8,135 +8,142 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ca.ulaval.ima.miniprojet.MakeRequestActivity$PlaceholderFragment" >
 
-    
-    <TextView
-        android:id="@+id/tvUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/lb_username"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <TextView
-        android:id="@+id/tvReqUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tvUsername"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/tvDestination"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvUsername"
-        android:text="@string/lb_destination"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <TextView
-        android:id="@+id/tvReqDestination"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tvDestination"
-        android:layout_below="@id/tvReqUsername"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-
-    <TextView
-        android:id="@+id/tvNbPassengers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvDestination"
-        android:text="@string/lb_passengers"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/tvReqPassengers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tvNbPassengers"
-        android:layout_below="@id/tvReqDestination"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-    <TextView
-        android:id="@+id/tvAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvNbPassengers"
-        android:text="@string/lb_address"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <EditText
-        android:id="@+id/tvReqAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/tvAddress"
-        android:layout_toRightOf="@id/tvReqPassengers"
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:ems="10"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:textSize="@dimen/activity_text" />
-    
-    <TextView
-        android:id="@+id/tvMessages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvReqAddress"
-        android:text="@string/lb_messages"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <TextView
-        android:id="@+id/tvReqMessages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvMessages"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <TextView
-        android:id="@+id/tvReply"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvReqMessages"
-        android:text="@string/lb_reply"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <EditText
-        android:id="@+id/inputReply"
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/tvReply"
-        android:textSize="@dimen/activity_text"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
 
-    <Button
-        android:id="@+id/send_replay_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/inputReply"
-        android:layout_alignParentLeft="true"
-        android:onClick="notifyButton"
-        android:text="@string/btn_send_reply" />
-    
-    <Button
-        android:id="@+id/notify_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/inputReply"
-        android:layout_alignParentRight="true"
-        android:onClick="notifyButton"
-        android:text="@string/btn_Notify" />
+        <RelativeLayout
+            android:layout_width="match_parent" 
+			android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/lb_username"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvReqUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvUsername"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tvUsername"
+                android:text="@string/lb_destination"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvReqDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvReqUsername"
+                android:layout_toRightOf="@id/tvDestination"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvNbPassengers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tvDestination"
+                android:text="@string/lb_passengers"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvReqPassengers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvReqDestination"
+                android:layout_toRightOf="@id/tvNbPassengers"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tvNbPassengers"
+                android:text="@string/lb_address"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/tvReqAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/tvAddress"
+                android:layout_toRightOf="@id/tvReqPassengers"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ems="10"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textSize="@dimen/activity_text" />
+
+            <TextView
+                android:id="@+id/tvMessages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tvReqAddress"
+                android:text="@string/lb_messages"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvReqMessages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tvMessages"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/tvReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tvReqMessages"
+                android:text="@string/lb_reply"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/inputReply"
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/tvReply"
+                android:textSize="@dimen/activity_text" />
+
+            <Button
+                android:id="@+id/send_replay_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/inputReply"
+                android:onClick="notifyButton"
+                android:text="@string/btn_send_reply" />
+
+            <Button
+                android:id="@+id/notify_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/inputReply"
+                android:onClick="notifyButton"
+                android:text="@string/btn_Notify" />
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>

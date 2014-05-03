@@ -57,12 +57,6 @@ public class ViewListActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				// TODO Auto-generated method stub
-				/*Brand selectedBrand = (Brand)arg0.getItemAtPosition(arg2);
-				Log.d("carretail","selected brand"+selectedBrand.getName());
-				Intent modelIntent = new Intent(getApplicationContext(), ModelListActivity.class);
-				modelIntent.putExtra(ModelListActivity.BRAND_EXTRA, selectedBrand);
-				startActivity(modelIntent);*/
 				RequestModel selectedRequest = (RequestModel)arg0.getItemAtPosition(arg2);
 				Intent i = new Intent(ViewListActivity.this, AcceptRequest.class);
 				i.putExtra("request_info", selectedRequest);

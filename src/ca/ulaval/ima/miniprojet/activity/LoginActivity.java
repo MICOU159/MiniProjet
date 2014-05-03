@@ -6,29 +6,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.ulaval.ima.miniprojet.model.UserModel;
-//import ca.ulaval.ima.miniprojet.util.AsyncCustomURLRequest; est absent pour moi
-import ca.ulaval.ima.miniprojet.util.Util;
-import ca.ulaval.ima.miniprojet.util.HttpCustomRequest;
 import ca.ulaval.ima.miniprojet.R;
-import ca.ulaval.ima.miniprojet.util.ASyncURLRequest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,6 +68,11 @@ public class LoginActivity extends Activity {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
+	
+	//SharedPreferences
+	public static final String USER_PREFERENCES = "UserPrefs";
+	SharedPreferences settings; 
+	SharedPreferences.Editor prefEditor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +85,10 @@ public class LoginActivity extends Activity {
 		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
 		mEmailView = (EditText) findViewById(R.id.email);
 		mEmailView.setText(mEmail);
+
+		settings = getSharedPreferences(USER_PREFERENCES,MODE_PRIVATE);
+	    mEmailView.setText(settings.getString("username", "Default"));
+		
 
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView
@@ -224,6 +225,13 @@ public class LoginActivity extends Activity {
 						Intent intent = new Intent();
 						intent.putExtra(MainActivity.CURRENT_USER, user);
 						setResult(RESULT_OK, intent);
+						
+						  settings = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE);
+						  prefEditor = settings.edit();
+
+						  prefEditor.putString("username", mEmail);
+						  prefEditor.commit();
+						
 						finish();
 						
 					} else {
@@ -240,6 +248,7 @@ public class LoginActivity extends Activity {
 
 		}
 	}
+	
 
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
@@ -351,6 +360,13 @@ public class LoginActivity extends Activity {
 						Intent intent = new Intent();
 						intent.putExtra(MainActivity.CURRENT_USER, user);
 						setResult(RESULT_OK, intent);
+						
+						  settings = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE);
+						  prefEditor = settings.edit();
+
+						  prefEditor.putString("username", mEmail);
+						  prefEditor.commit();
+						
 						finish();
 						
 					} else {

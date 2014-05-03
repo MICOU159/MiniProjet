@@ -10,16 +10,16 @@
     <string name="view_list">View List</string>
     <string name="API_BASE">http://relaybit.com:2222/</string>
     <string name="API_FORMAT"></string>
-    <string name="title_activity_make_request">MakeRequestActivity</string>
-    <string name="title_activity_view_map">ViewMapActivity</string>
+    <string name="title_activity_make_request">Request a hike</string>
+    <string name="title_activity_view_map">Find hitchhikers near you</string>
     <string name="destination">Destination : </string>
     <string name="personsCount">Number of travelers : </string>
     <string name="message">Leave a message : </string>
     <string name="summit">Summit</string>
-    <string name="title_activity_view_list">ViewListActivity</string>
+    <string name="title_activity_view_list">List of hitchhikers</string>
     <string name="list_activity_nothing_to_display">No data available</string>
     <string name="desc_status">status</string>
-    <string name="title_activity_accept_request">AcceptRequestActivity</string>
+    <string name="title_activity_accept_request">Confirm you will pick them up</string>
     
     
         <!-- Strings related to accepting a request -->

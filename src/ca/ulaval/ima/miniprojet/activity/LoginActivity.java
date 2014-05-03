@@ -87,7 +87,7 @@ public class LoginActivity extends Activity {
 		mEmailView.setText(mEmail);
 
 		settings = getSharedPreferences(USER_PREFERENCES,MODE_PRIVATE);
-	    mEmailView.setText(settings.getString("username", "Default"));
+	    mEmailView.setText(settings.getString("username", ""));
 		
 
 		mPasswordView = (EditText) findViewById(R.id.password);

@@ -96,7 +96,7 @@ public class MakeRequestActivity extends Activity {
 		edit= (EditText) findViewById(R.id.inputPersonsCount);
 		String personsCountText = edit.getText().toString();
 		
-//		edit= (EditText) findViewById(R.id.inputMessage); inputmessage n'existe pas
+		edit= (EditText) findViewById(R.id.inputMessage); 
 		String message = edit.getText().toString();
 		
 		if(!destination.isEmpty() && !personsCountText.isEmpty()){

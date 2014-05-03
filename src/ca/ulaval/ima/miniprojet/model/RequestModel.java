@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 public class RequestModel implements Parcelable{
 
@@ -144,6 +143,14 @@ public class RequestModel implements Parcelable{
 
 	public void setmStatus(int status) {
 		this.mStatus = status;
+	}
+	
+	public ArrayList<String> getmMessages() {
+		return mMessages;
+	}
+
+	public void setmMessages(ArrayList<String> messages) {
+		this.mMessages = messages;
 	}
 	
 	public static final Parcelable.Creator<RequestModel> CREATOR = new Parcelable.Creator<RequestModel>() {

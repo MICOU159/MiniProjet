@@ -2,6 +2,8 @@ package ca.ulaval.ima.miniprojet.activity;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +36,7 @@ public class AcceptRequest extends Activity{
 	private final static String preUrl = "http://relaybit.com:2222/requests/";
 	private final static String postUrlStatus = "/pick";
 	private final static String postUrlMessage = "/addMessage";
+	private final String messages = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,10 @@ public class AcceptRequest extends Activity{
         String username = reqModel.getmUsername();
         String destination = reqModel.getmDestination();
         int passengers = reqModel.getmPersonsCount();
+    	String messages = "";
+    	
+
+
         
         Double latitude = reqModel.getmPosition().getmLatitude();
         Double longitude = reqModel.getmPosition().getmLongitude();
@@ -57,12 +64,21 @@ public class AcceptRequest extends Activity{
 		TextView tvUsername = (TextView) findViewById(R.id.tvReqUsername);
 		TextView tvPassengers = (TextView) findViewById(R.id.tvReqPassengers);
         TextView tvDestination = (TextView) findViewById(R.id.tvReqDestination);
+        TextView tvMessages = (TextView) findViewById(R.id.tvReqMessages);
         TextView tvAddress = (TextView) findViewById(R.id.tvReqAddress);
        
         tvUsername.setText(username);
         tvPassengers.setText(""+passengers);
         tvDestination.setText(destination);
         
+        Iterator<String> it = reqModel.getmMessages().iterator();
+		while (it.hasNext()) {
+			String obj = it.next();
+			messages = obj + "\n";
+		}
+		
+		tvMessages.setText(messages);
+
         Geocoder geocoder = new Geocoder(this, Locale.CANADA);
         
         try{
@@ -85,6 +101,11 @@ public class AcceptRequest extends Activity{
         	tvAddress.setText("Cannot get an address from the GPS localisation!");
         }
         
+	}
+	
+	public void replyButton(View v) {
+		TextView tvReply = (TextView) findViewById(R.id.inputReply);
+		postMessage(tvReply.getText().toString());
 	}
 	
 	public void notifyButton(View v) {

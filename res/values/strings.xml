@@ -19,7 +19,7 @@
     <string name="title_activity_view_list">List of hitchhikers</string>
     <string name="list_activity_nothing_to_display">No data available</string>
     <string name="desc_status">status</string>
-    <string name="title_activity_accept_request">Confirm you will pick them up</string>
+    <string name="title_activity_accept_request">Consult a request</string>
     
     
         <!-- Strings related to accepting a request -->

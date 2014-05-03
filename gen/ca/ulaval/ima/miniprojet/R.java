@@ -1300,7 +1300,7 @@ containing a value of this type.
         public static final int collapseActionView=0x7f05000d;
         public static final int container=0x7f050047;
         public static final int default_activity_button=0x7f05002b;
-        public static final int destination=0x7f05006d;
+        public static final int destination=0x7f05006e;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int dropdown=0x7f05000f;
@@ -1365,7 +1365,7 @@ containing a value of this type.
         public static final int showTitle=0x7f050006;
         public static final int sign_in_button=0x7f050046;
         public static final int split_action_bar=0x7f050021;
-        public static final int status_icon=0x7f05006e;
+        public static final int status_icon=0x7f05006c;
         public static final int submit_area=0x7f05003c;
         public static final int summit_btn=0x7f05006b;
         public static final int tabMode=0x7f050002;
@@ -1389,7 +1389,7 @@ containing a value of this type.
         public static final int txtUsername=0x7f05004c;
         public static final int up=0x7f050024;
         public static final int useLogo=0x7f050003;
-        public static final int username=0x7f05006c;
+        public static final int username=0x7f05006d;
         public static final int viewList_btn=0x7f050064;
         public static final int viewMap_btn=0x7f050063;
         public static final int withText=0x7f05000c;

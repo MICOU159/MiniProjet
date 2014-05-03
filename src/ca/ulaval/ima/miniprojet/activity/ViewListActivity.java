@@ -188,8 +188,8 @@ public class ViewListActivity extends ListActivity {
 			}
 			
 			ViewHolder holder = (ViewHolder) childView.getTag();
-			holder.username.setText(mRequestsList.get(arg0).getmUsername());
-			holder.destination.setText(mRequestsList.get(arg0).getmDestination());
+			holder.username.setText("User : "+ mRequestsList.get(arg0).getmUsername());
+			holder.destination.setText("Destination : " + mRequestsList.get(arg0).getmDestination());
 			
 			int statusCode = mRequestsList.get(arg0).getmStatus();
 			if(statusCode == 0){
